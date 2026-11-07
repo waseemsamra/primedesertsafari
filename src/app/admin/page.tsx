@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
 interface Tour { id: number; title?: string | null; name?: string | null; category?: string | null; location?: string | null; price?: number | null; status?: string | null; slug?: string | null; }
-interface Category { id: number; name: string; }
+interface Category { id: number; name: string; image_url?: string | null; }
 interface LocationItem { id: number; name: string; status?: string | null; }
 interface AdminUser { id: number; email: string; name?: string | null; role?: string | null; status?: string | null; created_at?: string | null; }
 
@@ -26,8 +26,10 @@ export default function AdminDashboard() {
   // Category Modal
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [categoryForm, setCategoryForm] = useState({ name: '' });
+  const [categoryForm, setCategoryForm] = useState({ name: '', image_url: '' });
   const [savingCategory, setSavingCategory] = useState(false);
+  const [uploadingCategoryImage, setUploadingCategoryImage] = useState(false);
+  const categoryImageRef = { current: null as HTMLInputElement | null };
 
   // Location Modal
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -45,7 +47,7 @@ export default function AdminDashboard() {
     setLoading(true); setError(''); setLocationsError('');
     const [tRes, cRes, lRes, uRes] = await Promise.all([
       supabase.from('tours').select('id,title,category,location,price,status,slug,image_url').order('id', { ascending: false }),
-      supabase.from('categories').select('id,name').order('name'),
+      supabase.from('categories').select('id,name,image_url').order('name'),
       supabase.from('locations').select('*').order('name'),
       supabase.from('admin_users').select('id,email,name,role,status,created_at').order('id', { ascending: false }),
     ]);
@@ -88,8 +90,8 @@ export default function AdminDashboard() {
   };
 
   // Category CRUD
-  const openCategoryModal = () => { setEditingCategory(null); setCategoryForm({ name: '' }); setShowCategoryModal(true); };
-  const editCategory = (category: Category) => { setEditingCategory(category); setCategoryForm({ name: category.name }); setShowCategoryModal(true); };
+  const openCategoryModal = () => { setEditingCategory(null); setCategoryForm({ name: '', image_url: '' }); setShowCategoryModal(true); };
+  const editCategory = (category: Category) => { setEditingCategory(category); setCategoryForm({ name: category.name, image_url: category.image_url || '' }); setShowCategoryModal(true); };
   const deleteCategory = async (id: number) => {
     if (!confirm('Delete this category? Tours in this category will keep their category text.')) return;
     const { error: err } = await supabase.from('categories').delete().eq('id', id);
@@ -99,15 +101,16 @@ export default function AdminDashboard() {
   const handleCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setSavingCategory(true);
     const name = categoryForm.name.trim();
+    const image_url = categoryForm.image_url.trim() || null;
     if (editingCategory) {
       const oldName = editingCategory.name;
-      const { error: err } = await supabase.from('categories').update({ name }).eq('id', editingCategory.id);
+      const { error: err } = await supabase.from('categories').update({ name, image_url }).eq('id', editingCategory.id);
       if (err) { alert(err.message); setSavingCategory(false); return; }
       await supabase.from('tours').update({ category: name }).eq('category', oldName);
-      setCategories((c) => c.map((x) => x.id === editingCategory.id ? { ...x, name } : x));
+      setCategories((c) => c.map((x) => x.id === editingCategory.id ? { ...x, name, image_url } : x));
       setTours((t) => t.map((x) => x.category === oldName ? { ...x, category: name } : x));
     } else {
-      const { data, error: err } = await supabase.from('categories').insert({ name }).select('id,name').single();
+      const { data, error: err } = await supabase.from('categories').insert({ name, image_url }).select('id,name,image_url').single();
       if (err) { alert(err.message); setSavingCategory(false); return; }
       if (data) setCategories((c) => [...c, data as Category].sort((a,b)=>a.name.localeCompare(b.name)));
     }
@@ -299,11 +302,12 @@ export default function AdminDashboard() {
             </div>
             <div className="table-container">
               <table>
-                <thead><tr><th>Category Name</th><th>Total Tours</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Image</th><th>Category Name</th><th>Total Tours</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {categories.length === 0 ? <tr><td colSpan={3} style={{ padding: 24, color: 'var(--gray)' }}>No categories found.</td></tr>
+                  {categories.length === 0 ? <tr><td colSpan={4} style={{ padding: 24, color: 'var(--gray)' }}>No categories found.</td></tr>
                   : categories.map(cat => (
                     <tr key={cat.id}>
+                      <td>{cat.image_url ? <img src={cat.image_url} alt={cat.name} style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} /> : <span style={{ color: 'var(--gray)' }}>—</span>}</td>
                       <td><strong>{cat.name}</strong></td>
                       <td>{tourCounts.get(cat.name) || 0} Tours</td>
                       <td className="action-btns">
