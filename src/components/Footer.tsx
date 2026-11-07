@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-col">
             <Link href="/" className="footer-logo" aria-label="Prime Desert Safari home">
-              <i className="fas fa-mountain"></i> Prime Desert Safari
+              <img src="/Prime-Desert-Safari-Logo.png" alt="Prime Desert Safari" className="footer-brand-logo" />
             </Link>
             <p style={{ fontSize: 13, color: "var(--text-light)", marginBottom: 15 }}>Subscribe to Our Special Offers</p>
             <div className="subscribe-form">

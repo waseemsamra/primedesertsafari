@@ -35,7 +35,7 @@ export default function Header() {
       <header>
         <div className="container nav-container">
           <Link href="/" className="logo" aria-label="Prime Desert Safari home">
-            <i className="fas fa-mountain"></i> Prime Desert Safari
+            <img src="/Prime-Desert-Safari-Logo.png" alt="Prime Desert Safari" className="brand-logo" />
           </Link>
 
           <button
