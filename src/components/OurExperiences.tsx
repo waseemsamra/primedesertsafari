@@ -29,7 +29,7 @@ export default function OurExperiences() {
           <p>Come adventure with us - from award-winning desert safaris to world-famous attractions.</p>
         </div>
       </div>
-      <div className="circular-categories">
+      <div className="circular-categories" style={{ display: "flex", flexWrap: "nowrap", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
         {items.map((it, idx) => {
           const href = it.link_url && it.link_url.startsWith("/") ? it.link_url : "/";
           const inner = (<><img src={it.image_url} alt={it.title} /><p>{it.title}</p></>);

@@ -440,8 +440,8 @@
         /* Responsive Design */
         @media (max-width: 1024px) {
             .card-grid { grid-template-columns: repeat(2, 1fr); }
-            .circular-categories { flex-wrap: wrap; }
-            .circle-cat { width: 30%; margin-bottom: 20px; }
+            .circular-categories { display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .circle-cat { flex: 0 0 140px; width: 140px; margin-bottom: 0; }
             .split-banners { grid-template-columns: 1fr; }
             .skywards-banner { flex-direction: column; }
             .skywards-img, .skywards-content { width: 100%; }

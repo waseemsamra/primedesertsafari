@@ -509,10 +509,11 @@ body {
             .card-grid::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
             .circular-categories {
               display: flex !important;
+              flex-direction: row !important;
               flex-wrap: nowrap !important;
-              justify-content: flex-start;
-              overflow-x: auto;
-              overflow-y: hidden;
+              justify-content: flex-start !important;
+              overflow-x: auto !important;
+              overflow-y: hidden !important;
               gap: 14px;
               margin-top: 24px;
               padding-bottom: 10px;
@@ -523,7 +524,7 @@ body {
             }
             .circular-categories::-webkit-scrollbar { height: 6px; }
             .circular-categories::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
-            .circle-cat { flex: 0 0 110px; width: 110px; margin-bottom: 0; scroll-snap-align: start; }
+            .circle-cat { flex: 0 0 110px !important; width: 110px !important; margin-bottom: 0 !important; scroll-snap-align: start; }
             .circle-cat img { margin-bottom: 10px; }
             .circle-cat p { font-size: 13px; line-height: 1.25; }
             .image-gallery { grid-template-columns: repeat(2, 1fr); }
