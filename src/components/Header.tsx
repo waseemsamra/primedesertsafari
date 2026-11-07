@@ -53,10 +53,8 @@ export default function Header() {
             <input type="text" placeholder="Find my feeling" />
             <i className="fas fa-search"></i>
           </div>
-          <div className="nav-actions">
-            <Link href="/"><i className="fas fa-headset"></i> Chat with an expert</Link>
-            <Link href="/admin/login"><i className="fas fa-user"></i> Log In</Link>
-          </div>
+          <div className="nav-actions" />
+
         </div>
 
         <nav className="main-menu desktop-main-menu" aria-label="Main menu">
@@ -73,10 +71,6 @@ export default function Header() {
 
         <nav id="mobile-nav" className={`mobile-nav ${open ? "open" : ""}`} aria-label="Mobile menu" aria-hidden={!open}>
           <div className="mobile-nav-inner">
-            <div className="mobile-nav-actions">
-              <Link href="/admin/login" onClick={() => setOpen(false)}><i className="fas fa-user"></i> Log In</Link>
-              <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-headset"></i> Chat with an expert</Link>
-            </div>
             <ul className="mobile-nav-links">
               {menuLinks.map((l) => (
                 <li key={`m-${l.label}`}><Link href={l.href} onClick={() => setOpen(false)}>{l.label}</Link></li>
