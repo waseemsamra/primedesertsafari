@@ -19,6 +19,7 @@ export default function Header() {
   if (pathname?.startsWith("/admin")) return null;
 
   const menuLinks = [
+    { href: "/tours", label: "All Tours" },
     { href: "/category/desert-adventures", label: "Desert Adventures" },
     { href: "/category/attractions", label: "Attractions" },
     { href: "/category/sports-events", label: "Sports Events" },
@@ -34,6 +35,7 @@ export default function Header() {
       <div className="top-bar">
         <div className="container">
           <div className="top-bar-links">
+            <Link href="/tours">All Tours</Link>
             <Link href="/category/desert-adventures">Desert Adventures</Link>
             <Link href="/category/attractions">Attractions</Link>
             <Link href="/category/sports-events">Sports Events</Link>
