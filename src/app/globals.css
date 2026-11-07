@@ -603,7 +603,7 @@ body {
 /* Brand logo */
 .brand-logo { display: block; height: 96px; width: auto; max-width: 608px; object-fit: contain; margin: 0; padding: 0; }
 .nav-container .logo { padding: 0; line-height: 0; }
-.footer-brand-logo { display: block; height: 42px; width: auto; max-width: 220px; object-fit: contain; margin-bottom: 12px; }
+.footer-brand-logo { display: block; height: 64px; width: auto; max-width: 320px; object-fit: contain; margin-bottom: 12px; }
 @media (max-width: 768px) {
   .nav-container .logo { margin-left: 12px; padding: 0; line-height: 0; }
   .brand-logo { height: 96px; max-width: 504px; margin: 0; padding: 0; }
