@@ -295,7 +295,7 @@ body {
         }
         .btn-view-all:hover { background: var(--text-dark); color: #fff; }
 
-        /* Circular Categories */
+        /* Circular Categories / Our Experiences */
         .circular-categories {
             display: flex;
             justify-content: space-between;
@@ -456,8 +456,20 @@ body {
         /* Responsive Design */
         @media (max-width: 1024px) {
             .card-grid { grid-template-columns: repeat(2, 1fr); }
-            .circular-categories { flex-wrap: wrap; }
-            .circle-cat { width: 30%; margin-bottom: 20px; }
+            .circular-categories {
+                justify-content: flex-start;
+                overflow-x: auto;
+                overflow-y: hidden;
+                flex-wrap: nowrap;
+                gap: 16px;
+                padding-bottom: 8px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+            .circular-categories::-webkit-scrollbar { height: 6px; }
+            .circular-categories::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+            .circle-cat { flex: 0 0 140px; width: 140px; margin-bottom: 0; scroll-snap-align: start; }
             .split-banners { grid-template-columns: 1fr; }
             .skywards-banner { flex-direction: column; }
             .skywards-img, .skywards-content { width: 100%; }
@@ -472,10 +484,84 @@ body {
             .hero { height: 300px; }
             .hero-content h1 { font-size: 28px; }
             .card-grid { grid-template-columns: 1fr; }
-            .circle-cat { width: 45%; }
+            .circular-categories { gap: 14px; margin-top: 24px; }
+            .circle-cat { flex: 0 0 110px; width: 110px; }
+            .circle-cat img { margin-bottom: 10px; }
+            .circle-cat p { font-size: 13px; line-height: 1.25; }
             .image-gallery { grid-template-columns: repeat(2, 1fr); }
             .tripadvisor-banner { flex-direction: column; text-align: center; }
             .footer-grid { grid-template-columns: 1fr; }
             .footer-bottom { flex-direction: column; gap: 15px; text-align: center; }
         }
     
+
+/* Mobile header/menu */
+.mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-dark);
+  font-size: 18px;
+  cursor: pointer;
+}
+.mobile-nav,
+.mobile-nav-overlay { display: none; }
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle { display: inline-flex; margin-left: auto; }
+  .nav-container { align-items: center; gap: 10px; }
+  .nav-container .logo { flex: 1 1 auto; min-width: 0; font-size: 20px; }
+  .search-bar { order: 3; width: 100%; margin: 10px 0 0; }
+  .nav-actions { display: none; }
+  .top-bar { display: none; }
+  .desktop-main-menu, .main-menu.desktop-main-menu { display: none !important; }
+
+  .mobile-nav-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    border: 0;
+    z-index: 1100;
+  }
+  .mobile-nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 88vw);
+    background: #fff;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.12);
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    z-index: 1200;
+    overflow-y: auto;
+  }
+  .mobile-nav.open { transform: translateX(0); }
+  .mobile-nav-inner { padding: 20px; }
+  .mobile-nav-actions {
+    display: grid;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .mobile-nav-actions a, .mobile-nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .mobile-nav-actions a:hover, .mobile-nav-links a:hover { background: #f8fafc; color: var(--primary-yellow); }
+  .mobile-nav-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+}
