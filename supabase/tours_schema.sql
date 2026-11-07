@@ -98,6 +98,31 @@ END $$;
 -- 2) The /admin/login page signs in with supabase.auth.signInWithPassword({ email, password }).
 -- 3) Optionally add a matching record to admin_users for display/roles in the dashboard.
 
+
+-- Categories (managed in Admin)
+CREATE TABLE IF NOT EXISTS categories (
+  id bigint generated always as identity primary key,
+  name text not null unique,
+  created_at timestamptz default now()
+);
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='categories' AND policyname='categories_select_all') THEN
+    CREATE POLICY "categories_select_all" ON categories FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='categories' AND policyname='categories_insert_all') THEN
+    CREATE POLICY "categories_insert_all" ON categories FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='categories' AND policyname='categories_update_all') THEN
+    CREATE POLICY "categories_update_all" ON categories FOR UPDATE USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='categories' AND policyname='categories_delete_all') THEN
+    CREATE POLICY "categories_delete_all" ON categories FOR DELETE USING (true);
+  END IF;
+END $$;
+
+INSERT INTO categories (name) VALUES ('Desert Safaris'),('City Tours'),('Water Parks'),('Attractions'),('Cruise and Boat Tours') ON CONFLICT (name) DO NOTHING;
+
 -- Run the categories table block above if /admin shows "categories table not found" (PGRST205).
 
 -- Locations (managed in Admin > Settings)
@@ -142,3 +167,33 @@ CREATE INDEX IF NOT EXISTS tours_location_id_idx ON tours (location_id);
 UPDATE tours t SET location_id = l.id
 FROM locations l
 WHERE t.location_id IS NULL AND t.location IS NOT NULL AND lower(trim(t.location)) = lower(trim(l.name));
+
+-- Hero slides (CMS)
+CREATE TABLE IF NOT EXISTS hero_slides (
+  id bigint generated always as identity primary key,
+  title text,
+  description text,
+  image_url text not null,
+  button_text text default 'Book now',
+  button_link text default '/',
+  sort_order int default 0,
+  status text default 'Active',
+  created_at timestamptz default now()
+);
+ALTER TABLE hero_slides ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='hero_slides' AND policyname='hero_slides_select_all') THEN
+    CREATE POLICY "hero_slides_select_all" ON hero_slides FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='hero_slides' AND policyname='hero_slides_insert_all') THEN
+    CREATE POLICY "hero_slides_insert_all" ON hero_slides FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='hero_slides' AND policyname='hero_slides_update_all') THEN
+    CREATE POLICY "hero_slides_update_all" ON hero_slides FOR UPDATE USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='hero_slides' AND policyname='hero_slides_delete_all') THEN
+    CREATE POLICY "hero_slides_delete_all" ON hero_slides FOR DELETE USING (true);
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';

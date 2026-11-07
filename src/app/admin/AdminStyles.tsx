@@ -103,6 +103,22 @@ export default function AdminStyles() {
       .modal-header h3 { font-size: 18px; }
       .close-modal { cursor: pointer; background: none; border: none; font-size: 20px; color: var(--gray); }
       .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+
+      /* CMS submenu */
+      .nav-group-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 25px; font-size: 15px; color: #cbd5e1; background: transparent; border: 0; cursor: pointer; text-align: left; font-family: inherit; }
+      .nav-group-toggle span { display: flex; align-items: center; gap: 15px; }
+      .nav-group-toggle:hover, .nav-group-toggle.active { background-color: rgba(255,255,255,0.05); color: var(--primary); border-left: 4px solid var(--primary); }
+      .nav-chevron { font-size: 11px; opacity: .8; }
+      .sub-nav-links { list-style: none; padding: 0 0 8px; margin: 0; }
+      .sub-nav-links li a { padding: 11px 25px 11px 52px; font-size: 14px; }
+      .sub-nav-links li a:hover, .sub-nav-links li a.active { border-left: 4px solid transparent; }
+      .cms-hero-grid { display: grid; gap: 16px; }
+      .cms-slide-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: 220px 1fr auto; gap: 16px; align-items: start; }
+      .cms-slide-preview { width: 220px; height: 124px; border-radius: 10px; overflow: hidden; background: #e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; }
+      .cms-slide-preview img { width:100%; height:100%; object-fit:cover; display:block; }
+      .cms-slide-actions { display:flex; flex-direction:column; gap:8px; }
+      @media (max-width: 900px) { .cms-slide-card { grid-template-columns: 1fr; } .cms-slide-preview { width:100%; height:180px; } .cms-slide-actions { flex-direction:row; flex-wrap:wrap; } }
     `}</style>
   );
 }
+

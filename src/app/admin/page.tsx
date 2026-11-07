@@ -14,12 +14,14 @@ const tourName = (t: Tour) => t.title || t.name || 'Untitled';
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('tours');
   const [pageTitle, setPageTitle] = useState('Manage Tours');
+  const [cmsOpen, setCmsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<LocationItem[]>([]);
   const [tours, setTours] = useState<Tour[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [locationsError, setLocationsError] = useState('');
 
   // Category Modal
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -40,18 +42,36 @@ export default function AdminDashboard() {
   const [savingUser, setSavingUser] = useState(false);
 
   const load = async () => {
-    setLoading(true); setError('');
-    const [tRes, cRes, uRes] = await Promise.all([
+    setLoading(true); setError(''); setLocationsError('');
+    const [tRes, cRes, lRes, uRes] = await Promise.all([
       supabase.from('tours').select('id,title,category,location,price,status,slug,image_url').order('id', { ascending: false }),
       supabase.from('categories').select('id,name').order('name'),
+      supabase.from('locations').select('*').order('name'),
       supabase.from('admin_users').select('id,email,name,role,status,created_at').order('id', { ascending: false }),
     ]);
-    if (tRes.error) setError(tRes.error.message);
-    if (cRes.error) setError((e) => e || cRes.error!.message);
-    // admin_users table may not exist yet; don't hard-fail the whole dashboard
-    if (uRes.error && !/relation .*admin_users.* does not exist/i.test(uRes.error.message)) setError((e) => e || uRes.error!.message);
-    setTours((tRes.data as Tour[]) || []);
-    setCategories((cRes.data as Category[]) || []);
+    const missing = (msg?: string) => /relation .* does not exist|schema cache|Could not find the table|PGRST205/i.test(msg || '');
+    const errs: string[] = [];
+    if (tRes.error) errs.push(tRes.error.message);
+    if (cRes.error && !missing(cRes.error.message)) errs.push(`Categories: ${cRes.error.message}`);
+    if (lRes.error) {
+      const msg = lRes.error.message || 'Failed to load locations';
+      setLocationsError(missing(msg) ? `${msg} — Run supabase/tours_schema.sql in Supabase SQL Editor, then run: NOTIFY pgrst, 'reload schema';` : msg);
+      if (!missing(msg)) errs.push(`Locations: ${msg}`);
+    }
+    if (uRes.error && !missing(uRes.error.message)) errs.push(`Users: ${uRes.error.message}`);
+    const toursData = (tRes.data as Tour[]) || [];
+    let cats = (cRes.data as Category[]) || [];
+    if ((!cats.length || cRes.error) && toursData.length) {
+      const names = Array.from(new Set(toursData.map((x) => x.category).filter(Boolean))) as string[];
+      if (names.length) cats = names.sort((a,b)=>a.localeCompare(b)).map((name, i) => ({ id: i + 1, name }));
+    }
+    if (cRes.error && missing(cRes.error.message)) {
+      errs.push(`Categories table missing (${cRes.error.message}). Run supabase/tours_schema.sql in Supabase SQL Editor, then run: NOTIFY pgrst, 'reload schema'; using tour categories as fallback.`);
+    }
+    setError(errs.filter(Boolean).join(' | '));
+    setTours(toursData);
+    setCategories(cats);
+    setLocations(((lRes.data as LocationItem[]) || []).map((l) => ({ id: l.id, name: l.name, status: l.status || 'Active' })));
     setUsers((uRes.data as AdminUser[]) || []);
     setLoading(false);
   };
@@ -167,6 +187,11 @@ export default function AdminDashboard() {
         .nav-links { padding:20px 0; flex:1; }
         .nav-links li a { display:flex; align-items:center; gap:15px; padding:15px 25px; font-size:15px; color:#cbd5e1; cursor:pointer; }
         .nav-links li a:hover,.nav-links li a.active { background:rgba(255,255,255,0.05); color:var(--primary); border-left:4px solid var(--primary); }
+        .nav-group-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:15px; padding:15px 25px; font-size:15px; color:#cbd5e1; background:transparent; border:0; cursor:pointer; text-align:left; font-family:inherit; }
+        .nav-group-toggle span { display:flex; align-items:center; gap:15px; }
+        .nav-group-toggle:hover,.nav-group-toggle.active { background:rgba(255,255,255,0.05); color:var(--primary); border-left:4px solid var(--primary); }
+        .sub-nav-links { padding:0 0 8px; }
+        .sub-nav-links li a { padding:11px 25px 11px 52px; font-size:14px; }
         .sidebar-footer { padding:20px; border-top:1px solid rgba(255,255,255,0.1); }
         .sidebar-footer a { display:flex; align-items:center; gap:10px; color:#cbd5e1; cursor:pointer; }
         .main-content { flex:1; display:flex; flex-direction:column; overflow-y:auto; }
@@ -210,8 +235,15 @@ export default function AdminDashboard() {
             <li><a className={activeTab === 'tours' ? 'active' : ''} onClick={() => handleNavClick('tours', 'Manage Tours')}><i className="fas fa-map-marked-alt"></i> Tours</a></li>
             <li><a className={activeTab === 'categories' ? 'active' : ''} onClick={() => handleNavClick('categories', 'Manage Categories')}><i className="fas fa-tags"></i> Categories</a></li>
             <li><a className={activeTab === 'users' ? 'active' : ''} onClick={() => handleNavClick('users', 'Manage Users')}><i className="fas fa-users"></i> Users</a></li>
+            <li>
+              <button type="button" className={`nav-group-toggle ${cmsOpen ? 'active' : ''}`} onClick={() => setCmsOpen((v) => !v)}>
+                <span><i className="fas fa-layer-group"></i> CMS</span>
+                <i className={`fas fa-chevron-${cmsOpen ? 'down' : 'right'}`} style={{ fontSize: 11 }}></i>
+              </button>
+              {cmsOpen ? <ul className="sub-nav-links"><li><Link href="/admin/cms/hero"><i className="fas fa-images"></i> Hero Management</Link></li></ul> : null}
+            </li>
             <li><a className={activeTab === 'settings' ? 'active' : ''} onClick={() => handleNavClick('settings', 'Settings')}><i className="fas fa-cog"></i> Settings</a></li>
-            <li><a className={activeTab === 'profile' ? 'active' : ''} onClick={() => handleNavClick('profile', 'Profile')}><i className="fas fa-user-circle"></i> Profile</a></li>
+            <li><a className={activeTab === 'profile' ? 'active' : ''} onClick={() => handleNavClick('profile', 'My Profile')}><i className="fas fa-user-circle"></i> Profile</a></li>
           </ul>
           <div className="sidebar-footer"><a onClick={async () => { await supabase.auth.signOut(); window.location.href = '/admin/login'; }}><i className="fas fa-sign-out-alt"></i> Logout</a></div>
         </aside>
@@ -315,7 +347,7 @@ export default function AdminDashboard() {
               <table>
                 <thead><tr><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {locations.length === 0 ? <tr><td colSpan={3} style={{ padding: 24, color: 'var(--gray)' }}>No locations found. Run <code>supabase/tours_schema.sql</code> to create the <code>locations</code> table.</td></tr>
+                  {locations.length === 0 ? <tr><td colSpan={3} style={{ padding: 24, color: 'var(--gray)' }}>{locationsError ? <span style={{ color: 'var(--danger)' }}>{locationsError}</span> : <>No locations found. Run <code>supabase/tours_schema.sql</code> to create the <code>locations</code> table.</>}</td></tr>
                   : locations.map(loc => (
                     <tr key={loc.id}>
                       <td><strong>{loc.name}</strong></td>
