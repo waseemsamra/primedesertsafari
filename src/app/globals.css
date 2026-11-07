@@ -673,9 +673,11 @@ div.arrow-btn {
   .slider-section-title, .section-header h2 { font-size: 18px !important; line-height: 1.25 !important; }
   .section-header p { font-size: 13px; }
   .section-view-all-top, .slider-view-all, .section-header > a, .section-head-actions .section-view-all-top { display: none !important; }
-  .section-view-all-bottom { display: flex !important; justify-content: center; margin-top: 14px; }
-  .section-view-all-bottom .btn-view-all { display: inline-block; }
-  .view-all-container { margin-top: 14px; }
+  .section-view-all-bottom { display: flex !important; justify-content: center; margin-top: 14px; padding: 0 16px; }
+  .section-view-all-bottom .btn-view-all,
+  .view-all-container .btn-view-all,
+  .view-all-container button.btn-view-all { display: block; width: 100%; max-width: 100%; text-align: center; box-sizing: border-box; }
+  .view-all-container { margin-top: 14px; display: flex !important; justify-content: center; padding: 0 16px; }
 }
 
 /* Hide horizontal scrollbar line (keep scroll) */
@@ -687,3 +689,12 @@ div.arrow-btn {
 .circular-categories,
 .card-grid,
 .main-menu ul { scrollbar-width: none; -ms-overflow-style: none; }
+
+@media (max-width: 768px) {
+  .arrow-btn, .arrow-btn.section-arrow, button.arrow-btn, button.section-arrow,
+  .arrows, .arrows .arrow-btn, .arrows > div, .arrows > button,
+  .section-header .arrows, .section-header .arrows .arrow-btn,
+  .slider-section-actions .arrow-btn, .slider-section-actions button,
+  .section-head-actions .arrow-btn, .section-head-actions button,
+  .section-arrow { display: none !important; visibility: hidden !important; width: 0 !important; min-width: 0 !important; max-width: 0 !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+}
