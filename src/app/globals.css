@@ -114,7 +114,6 @@ body {
             font-size: 13px;
             font-weight: 500;
         }
-        .nav-actions .cart { display: flex; align-items: center; gap: 5px; }
         
         .main-menu {
             background: #fff;

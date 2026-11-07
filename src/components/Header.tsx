@@ -56,7 +56,6 @@ export default function Header() {
           <div className="nav-actions">
             <Link href="/"><i className="fas fa-headset"></i> Chat with an expert</Link>
             <Link href="/admin/login"><i className="fas fa-user"></i> Log In</Link>
-            <div className="cart"><i className="fas fa-shopping-cart"></i> Cart</div>
           </div>
         </div>
 
@@ -77,7 +76,6 @@ export default function Header() {
             <div className="mobile-nav-actions">
               <Link href="/admin/login" onClick={() => setOpen(false)}><i className="fas fa-user"></i> Log In / Account</Link>
               <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-map-marker-alt"></i> Wishlist</Link>
-              <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-shopping-cart"></i> Cart</Link>
               <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-headset"></i> Chat with an expert</Link>
             </div>
             <ul className="mobile-nav-links">
