@@ -32,25 +32,6 @@ export default function Header() {
 
   return (
     <>
-      <div className="top-bar">
-        <div className="container">
-          <div className="top-bar-links">
-            <Link href="/tours">All Tours</Link>
-            <Link href="/category/desert-adventures">Desert Adventures</Link>
-            <Link href="/category/attractions">Attractions</Link>
-            <Link href="/category/sports-events">Sports Events</Link>
-            <Link href="/category/city-tours">City Tours</Link>
-            <Link href="/category/cruise-and-boat-tours">Cruise and Boat Tours</Link>
-            <Link href="/category/waterparks-and-theme-parks">Waterparks &amp; Theme Parks</Link>
-          </div>
-          <div className="top-bar-links">
-            <Link href="/admin/login"><i className="fas fa-user"></i> Log In / Create Account</Link>
-            <Link href="/"><i className="fas fa-map-marker-alt"></i> Wishlist</Link>
-            <Link href="/"><i className="fas fa-shopping-cart"></i> Cart</Link>
-          </div>
-        </div>
-      </div>
-
       <header>
         <div className="container nav-container">
           <Link href="/" className="logo" aria-label="Prime Desert Safari home">
