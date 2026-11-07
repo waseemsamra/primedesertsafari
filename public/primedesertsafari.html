@@ -189,12 +189,15 @@
         .arrow-btn {
             width: 40px; height: 40px;
             border-radius: 50%;
-            border: 1px solid var(--border-color);
-            background: #fff;
+            border: 0;
+            background: #2563eb;
+            color: #fff;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(37,99,235,.25);
         }
-        .arrow-btn:hover { border-color: var(--primary-yellow); color: var(--primary-yellow); }
+        .arrow-btn i, .arrow-btn svg { color: #fff !important; }
+        .arrow-btn:hover { background: #1d4ed8; color: #fff; }
 
         /* Card Grid (Used for Safaris, Trending, City Tours) */
         .card-grid {

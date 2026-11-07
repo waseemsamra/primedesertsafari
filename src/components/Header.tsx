@@ -53,7 +53,12 @@ export default function Header() {
             <input type="text" placeholder="Find my feeling" />
             <i className="fas fa-search"></i>
           </div>
-          <div className="nav-actions" />
+          <div className="nav-actions">
+            <Link href="/admin/login" aria-label="Sign in" className="nav-signin">
+              <span className="nav-signin-icon"><i className="fas fa-user"></i></span>
+              <span className="nav-signin-text">Sign in</span>
+            </Link>
+          </div>
 
         </div>
 

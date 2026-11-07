@@ -45,9 +45,15 @@ export default function ExperiencesManagementPage() {
   const onUpload = async (files: FileList | null) => {
     if (!files?.length) return;
     setUploading(true); setMsg('');
-    try { setForm((f) => ({ ...f, image_url: await uploadToImageKit(files[0]) })); }
-    catch (e: any) { setMsg(`Error: ${e?.message || 'Upload failed'}`); }
-    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
+    try {
+      const url = await uploadToImageKit(files[0]);
+      setForm((f) => ({ ...f, image_url: url }));
+    } catch (e: any) {
+      setMsg(`Error: ${e?.message || 'Upload failed'}`);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
   };
 
   const save = async (e: React.FormEvent) => {

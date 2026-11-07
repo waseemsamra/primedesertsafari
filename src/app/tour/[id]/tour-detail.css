@@ -69,7 +69,8 @@
 .tour-detail-page .section-header h2 { font-size: 24px; }
 .tour-detail-page .section-header h2 span { color: #d32f2f; }
 .tour-detail-page .arrows { display: flex; gap: 10px; }
-.tour-detail-page .arrow-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--border-color); background: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+.tour-detail-page .arrow-btn { width: 35px; height: 35px; border-radius: 50%; border: 0; background: #2563eb; color: #fff; display: inline-flex; justify-content: center; align-items: center; cursor: pointer; }
+.tour-detail-page .arrow-btn i { color: #fff; }
 .tour-detail-page .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
 .tour-detail-page .card { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fff; }
 .tour-detail-page .card-img { height: 180px; position: relative; }

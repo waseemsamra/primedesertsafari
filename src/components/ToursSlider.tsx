@@ -58,15 +58,15 @@ export default function ToursSlider({
 
   return (
     <section className="container" style={{ marginTop: 40 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 12 }}>
+      <div className="section-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 12 }}>
         <h2 className="slider-section-title">{title}</h2>
-        <div className="slider-section-actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Link href={viewAllHref} className="slider-view-all">View All</Link>
-          <button onClick={() => scroll(-320)} style={{ borderRadius: "50%", width: 36, height: 36, cursor: "pointer" }} aria-label="Scroll left">‹</button>
-          <button onClick={() => scroll(320)} style={{ borderRadius: "50%", width: 36, height: 36, cursor: "pointer" }} aria-label="Scroll right">›</button>
+        <div className="slider-section-actions section-head-actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Link href={viewAllHref} className="slider-view-all section-view-all-top">View All</Link>
+          <button type="button" className="arrow-btn section-arrow" onClick={() => scroll(-320)} aria-label="Scroll left"><i className="fas fa-chevron-left"></i></button>
+          <button type="button" className="arrow-btn section-arrow" onClick={() => scroll(320)} aria-label="Scroll right"><i className="fas fa-chevron-right"></i></button>
         </div>
       </div>
-      <div ref={ref} style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 0", scrollBehavior: "smooth" }}>
+      <div ref={ref} className="tours-slider-track" style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 0", scrollBehavior: "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}>
         {loading ? (
           <div style={{ color: "#64748b", padding: "12px 0" }}>Loading tours...</div>
         ) : tours.length === 0 ? (
@@ -79,6 +79,7 @@ export default function ToursSlider({
           ))
         )}
       </div>
+      <div className="section-view-all-bottom"><Link href={viewAllHref} className="btn-view-all">View all</Link></div>
     </section>
   );
 }
