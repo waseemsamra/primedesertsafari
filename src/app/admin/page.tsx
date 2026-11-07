@@ -264,10 +264,10 @@ export default function AdminDashboard() {
             </div>
             <div className="table-container">
               <table>
-                <thead><tr><th>Tour Name</th><th>Category</th><th>Location</th><th>Price (AED)</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Tour Name</th><th>Category</th><th>Location</th><th>Price (AED)</th><th>Status</th><th>Trending</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {loading ? <tr><td colSpan={6} style={{ padding: 24, color: 'var(--gray)' }}>Loading tours...</td></tr>
-                  : tours.length === 0 ? <tr><td colSpan={6} style={{ padding: 24, color: 'var(--gray)' }}>No tours found. <Link href="/admin/add-tour" style={{ color: 'var(--primary)' }}>Add one</Link>.</td></tr>
+                  {loading ? <tr><td colSpan={7} style={{ padding: 24, color: 'var(--gray)' }}>Loading tours...</td></tr>
+                  : tours.length === 0 ? <tr><td colSpan={7} style={{ padding: 24, color: 'var(--gray)' }}>No tours found. <Link href="/admin/add-tour" style={{ color: 'var(--primary)' }}>Add one</Link>.</td></tr>
                   : tours.map(tour => (
                     <tr key={tour.id}>
                       <td><strong><Link href={`/tour/${tour.slug || tour.id}`} style={{ color: 'inherit' }}>{tourName(tour)}</Link></strong></td>
@@ -275,6 +275,12 @@ export default function AdminDashboard() {
                       <td>{tour.location || '—'}</td>
                       <td>{tour.price != null ? Number(tour.price).toLocaleString() : '—'}</td>
                       <td><span className={`badge ${(tour.status || 'Active') === 'Active' ? 'badge-active' : 'badge-inactive'}`}>{tour.status || 'Active'}</span></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" checked={!!tour.is_trending} title="Show in Trending Attractions" onChange={async (e) => {
+                        const checked = e.target.checked;
+                        setTours((ts) => ts.map((x) => x.id === tour.id ? { ...x, is_trending: checked } : x));
+                        const { error: err } = await supabase.from('tours').update({ is_trending: checked }).eq('id', tour.id);
+                        if (err) { alert(err.message + (err.message.includes('is_trending') ? " (Run: ALTER TABLE tours ADD COLUMN IF NOT EXISTS is_trending boolean default false; NOTIFY pgrst, 'reload schema';)" : '')); setTours((ts) => ts.map((x) => x.id === tour.id ? { ...x, is_trending: !checked } : x)); }
+                      }} /></td>
                       <td className="action-btns">
                         <Link className="icon-btn btn-edit" href={`/admin/add-tour?id=${tour.id}`} title="Edit"><i className="fas fa-edit"></i></Link>
                         <button className="icon-btn btn-delete" onClick={() => deleteTour(tour.id)} title="Delete" type="button"><i className="fas fa-trash"></i></button>
@@ -399,8 +405,26 @@ export default function AdminDashboard() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header"><h3>{editingCategory ? 'Edit Category' : 'Add Category'}</h3><button className="close-modal" onClick={() => setShowCategoryModal(false)} type="button">&times;</button></div>
             <form onSubmit={handleCategorySubmit}>
-              <div className="form-group"><label>Category Name</label><input type="text" value={categoryForm.name} onChange={(e) => setCategoryForm({ name: e.target.value })} required /></div>
-              <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowCategoryModal(false)}>Cancel</button><button type="submit" className="btn btn-primary" disabled={savingCategory}>{savingCategory ? 'Saving...' : 'Save Category'}</button></div>
+              <div className="form-group"><label>Category Name</label><input type="text" value={categoryForm.name} onChange={(e) => setCategoryForm((f) => ({ ...f, name: e.target.value }))} required /></div>
+              <div className="form-group">
+                <label>Category Image (Upload or URL)</label>
+                <input ref={(el) => { categoryImageRef.current = el; }} type="file" accept="image/*" onChange={async (e) => {
+                  const file = e.target.files?.[0]; if (!file) return;
+                  setUploadingCategoryImage(true);
+                  try {
+                    const dataUrl = await new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result || '')); r.onerror = () => rej(new Error('read')); r.readAsDataURL(file); });
+                    const up = await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: dataUrl, fileName: file.name }) });
+                    const j = await up.json();
+                    if (!up.ok || !j.url) throw new Error(j.error || 'Upload failed');
+                    setCategoryForm((f) => ({ ...f, image_url: j.url }));
+                  } catch (err: any) { alert(err?.message || 'Upload failed'); }
+                  finally { setUploadingCategoryImage(false); if (categoryImageRef.current) categoryImageRef.current.value = ''; }
+                }} />
+                <span className="help-text">{uploadingCategoryImage ? 'Uploading to ImageKit...' : 'Upload from local drive (ImageKit) or paste URL below.'}</span>
+                <input type="text" value={categoryForm.image_url} onChange={(e) => setCategoryForm((f) => ({ ...f, image_url: e.target.value }))} placeholder="https://... (uploaded URL appears here)" style={{ marginTop: 8 }} />
+                {categoryForm.image_url ? <img src={categoryForm.image_url} alt="Preview" style={{ marginTop: 10, width: 96, height: 96, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border)' }} /> : null}
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowCategoryModal(false)}>Cancel</button><button type="submit" className="btn btn-primary" disabled={savingCategory || uploadingCategoryImage}>{savingCategory ? 'Saving...' : 'Save Category'}</button></div>
             </form>
           </div>
         </div>

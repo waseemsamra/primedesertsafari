@@ -74,6 +74,7 @@ function AddTourInner() {
   const [rating, setRating] = useState('');
   const [status, setStatus] = useState('Active');
   const [badge, setBadge] = useState('');
+  const [isTrending, setIsTrending] = useState(false);
   const [shortDescription, setShortDescription] = useState('');
   const [fullDescription, setFullDescription] = useState('');
   const [pickupInfo, setPickupInfo] = useState('Hotel or residence pick-up included from anywhere in Dubai');
@@ -257,6 +258,7 @@ function AddTourInner() {
       rating: rating.trim() || null,
       status,
       badge: badge.trim() || null,
+      is_trending: isTrending,
       image_url: normalizedGallery.cover || null,
       short_description: shortDescription.trim() || null,
       full_description: fullDescription.trim() || null,
@@ -330,6 +332,10 @@ function AddTourInner() {
                 <div className="form-row">
                   <div className="form-group"><label>Status</label><select value={status} onChange={(e) => setStatus(e.target.value)}><option value="Active">Active (Available)</option><option value="Inactive">Inactive (Sold Out)</option></select></div>
                   <div className="form-group"><label>Badge (optional)</label><input type="text" value={badge} onChange={(e) => setBadge(e.target.value)} placeholder="New / Popular" /></div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group"><label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" checked={isTrending} onChange={(e) => setIsTrending(e.target.checked)} /> Show in Trending Attractions (homepage)</label><span className="help-text">Marked tours appear in the Trending Attractions section.</span></div>
+                  <div className="form-group" />
                 </div>
                 <div className="form-group" style={{ marginBottom: 20 }}><label>Short Description (About)</label><textarea rows={3} value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} /></div>
                 <div className="form-group"><label>Full Description</label><textarea rows={4} value={fullDescription} onChange={(e) => setFullDescription(e.target.value)} /></div>

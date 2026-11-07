@@ -224,3 +224,11 @@ DO $$ BEGIN
   END IF;
 END $$;
 NOTIFY pgrst, 'reload schema';
+
+-- Category image (admin upload/URL)
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_url text;
+NOTIFY pgrst, 'reload schema';
+
+-- Trending flag (show in homepage Trending Attractions)
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS is_trending boolean default false;
+NOTIFY pgrst, 'reload schema';
