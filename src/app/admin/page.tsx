@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-interface Tour { id: number; title?: string | null; name?: string | null; category?: string | null; location?: string | null; price?: number | null; status?: string | null; slug?: string | null; }
+interface Tour { id: number; title?: string | null; name?: string | null; category?: string | null; location?: string | null; price?: number | null; status?: string | null; slug?: string | null; is_trending?: boolean | null; }
 interface Category { id: number; name: string; image_url?: string | null; }
 interface LocationItem { id: number; name: string; status?: string | null; }
 interface AdminUser { id: number; email: string; name?: string | null; role?: string | null; status?: string | null; created_at?: string | null; }
