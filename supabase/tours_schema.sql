@@ -197,3 +197,30 @@ DO $$ BEGIN
 END $$;
 
 NOTIFY pgrst, 'reload schema';
+
+-- CMS: Our Experiences (circular categories section)
+CREATE TABLE IF NOT EXISTS experience_items (
+  id bigint generated always as identity primary key,
+  title text not null,
+  image_url text not null,
+  link_url text,
+  sort_order int default 0,
+  status text default 'Active',
+  created_at timestamptz default now()
+);
+ALTER TABLE experience_items ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='experience_items' AND policyname='experience_items_select_all') THEN
+    CREATE POLICY "experience_items_select_all" ON experience_items FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='experience_items' AND policyname='experience_items_insert_all') THEN
+    CREATE POLICY "experience_items_insert_all" ON experience_items FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='experience_items' AND policyname='experience_items_update_all') THEN
+    CREATE POLICY "experience_items_update_all" ON experience_items FOR UPDATE USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='experience_items' AND policyname='experience_items_delete_all') THEN
+    CREATE POLICY "experience_items_delete_all" ON experience_items FOR DELETE USING (true);
+  END IF;
+END $$;
+NOTIFY pgrst, 'reload schema';

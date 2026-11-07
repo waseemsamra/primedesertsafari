@@ -48,6 +48,11 @@ export default function Sidebar() {
                   <i className="fas fa-images"></i> Hero Management
                 </Link>
               </li>
+              <li>
+                <Link href="/admin/cms/experiences" className={isActive('/admin/cms/experiences') ? 'active' : ''}>
+                  <i className="fas fa-circle-notch"></i> Our Experiences
+                </Link>
+              </li>
             </ul>
           )}
         </li>

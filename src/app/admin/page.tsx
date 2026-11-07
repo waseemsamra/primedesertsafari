@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                 <span><i className="fas fa-layer-group"></i> CMS</span>
                 <i className={`fas fa-chevron-${cmsOpen ? 'down' : 'right'}`} style={{ fontSize: 11 }}></i>
               </button>
-              {cmsOpen ? <ul className="sub-nav-links"><li><Link href="/admin/cms/hero"><i className="fas fa-images"></i> Hero Management</Link></li></ul> : null}
+              {cmsOpen ? <ul className="sub-nav-links"><li><Link href="/admin/cms/hero"><i className="fas fa-images"></i> Hero Management</Link></li><li><Link href="/admin/cms/experiences"><i className="fas fa-circle-notch"></i> Our Experiences</Link></li></ul> : null}
             </li>
             <li><a className={activeTab === 'settings' ? 'active' : ''} onClick={() => handleNavClick('settings', 'Settings')}><i className="fas fa-cog"></i> Settings</a></li>
             <li><a className={activeTab === 'profile' ? 'active' : ''} onClick={() => handleNavClick('profile', 'My Profile')}><i className="fas fa-user-circle"></i> Profile</a></li>
