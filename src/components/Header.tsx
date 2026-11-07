@@ -74,8 +74,7 @@ export default function Header() {
         <nav id="mobile-nav" className={`mobile-nav ${open ? "open" : ""}`} aria-label="Mobile menu" aria-hidden={!open}>
           <div className="mobile-nav-inner">
             <div className="mobile-nav-actions">
-              <Link href="/admin/login" onClick={() => setOpen(false)}><i className="fas fa-user"></i> Log In / Account</Link>
-              <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-map-marker-alt"></i> Wishlist</Link>
+              <Link href="/admin/login" onClick={() => setOpen(false)}><i className="fas fa-user"></i> Log In</Link>
               <Link href="/" onClick={() => setOpen(false)}><i className="fas fa-headset"></i> Chat with an expert</Link>
             </div>
             <ul className="mobile-nav-links">

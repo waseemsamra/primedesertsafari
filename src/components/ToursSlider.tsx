@@ -59,9 +59,9 @@ export default function ToursSlider({
   return (
     <section className="container" style={{ marginTop: 40 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 12 }}>
-        <h2 style={{ fontSize: 32, fontWeight: 700 }}>{title}</h2>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Link href={viewAllHref}>View All</Link>
+        <h2 className="slider-section-title">{title}</h2>
+        <div className="slider-section-actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Link href={viewAllHref} className="slider-view-all">View All</Link>
           <button onClick={() => scroll(-320)} style={{ borderRadius: "50%", width: 36, height: 36, cursor: "pointer" }} aria-label="Scroll left">‹</button>
           <button onClick={() => scroll(320)} style={{ borderRadius: "50%", width: 36, height: 36, cursor: "pointer" }} aria-label="Scroll right">›</button>
         </div>
