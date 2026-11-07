@@ -564,11 +564,13 @@ body {
 .mobile-nav-overlay { display: none; }
 
 @media (max-width: 768px) {
-  .mobile-menu-toggle { display: inline-flex; margin-left: auto; }
+  .mobile-menu-toggle { display: inline-flex; margin-left: 0; order: 2; }
   .nav-container { align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 0 2px; }
-  .nav-container .logo { flex: 1 1 auto; min-width: 0; font-size: 20px; }
+  .nav-container .logo { flex: 1 1 auto; min-width: 0; font-size: 20px; order: 0; }
   .search-bar { order: 3; flex: 0 0 100%; width: 100%; max-width: 100%; margin: 10px 0 0; }
-  .nav-actions { display: none; }
+  .nav-actions { display: inline-flex !important; margin: 0 0 0 auto; order: 1; }
+  .nav-actions .nav-signin-text { display: none !important; }
+  .nav-actions .nav-signin { gap: 0; }
   .desktop-main-menu, .main-menu.desktop-main-menu { display: none !important; }
 
   .mobile-nav-overlay {

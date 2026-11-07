@@ -38,6 +38,13 @@ export default function Header() {
             <img src="/Prime-Desert-Safari-Logo.png" alt="Prime Desert Safari" className="brand-logo" />
           </Link>
 
+          <div className="nav-actions">
+            <Link href="/admin/login" aria-label="Sign in" className="nav-signin">
+              <span className="nav-signin-icon"><i className="fas fa-user"></i></span>
+              <span className="nav-signin-text">Sign in</span>
+            </Link>
+          </div>
+
           <button
             type="button"
             className="mobile-menu-toggle"
@@ -52,12 +59,6 @@ export default function Header() {
           <div className="search-bar">
             <input type="text" placeholder="Find my feeling" />
             <i className="fas fa-search"></i>
-          </div>
-          <div className="nav-actions">
-            <Link href="/admin/login" aria-label="Sign in" className="nav-signin">
-              <span className="nav-signin-icon"><i className="fas fa-user"></i></span>
-              <span className="nav-signin-text">Sign in</span>
-            </Link>
           </div>
 
         </div>
