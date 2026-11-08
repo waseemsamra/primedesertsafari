@@ -13,7 +13,7 @@ const defaults: Item[] = [
 ];
 
 export default function PrimeMomentsGallery() {
-  const [items, setItems] = useState<Item[]>(defaults);
+  const [items, setItems] = useState<Item[] | null>(null);
   const [note, setNote] = useState('');
 
   useEffect(() => {
@@ -26,12 +26,27 @@ export default function PrimeMomentsGallery() {
       if (error) {
         console.warn('PrimeMomentsGallery:', error.message);
         setNote(error.message);
+        setItems(defaults);
         return;
       }
       const active = (data || []).filter((d: any) => d?.image_url && (!d.status || String(d.status).toLowerCase() === 'active'));
-      if (active.length > 0) setItems(active.map((d: any) => ({ id: d.id, image_url: String(d.image_url), alt_text: d.alt_text || null })));
+      setItems(active.length > 0 ? active.map((d: any) => ({ id: d.id, image_url: String(d.image_url), alt_text: d.alt_text || null })) : defaults);
     })();
   }, []);
+
+  if (!items) {
+    return (
+      <section className="container prime-moments-section" style={{ marginTop: 40, marginBottom: 10 }}>
+        <div className="section-header" style={{ marginBottom: 0 }}>
+          <div>
+            <h2>Your <span>Desert Safari</span> Moments</h2>
+            <p>See guest moments from Dubai desert safari, Abu Dhabi desert safari, dune buggy, quad bike, and private camp experiences across the UAE.</p>
+          </div>
+        </div>
+        <div className="image-gallery prime-moments-gallery" style={{ minHeight: 160 }} />
+      </section>
+    );
+  }
 
   return (
     <section className="container prime-moments-section" style={{ marginTop: 40, marginBottom: 10 }}>

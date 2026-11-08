@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 
 type Item = { title: string; image: string; href: string };
 
@@ -11,7 +12,7 @@ const defaults: Item[] = [
   { title: "Private Desert Safari Camp", image: "https://ik.imagekit.io/piwakgkp8/Private_Desert_Safari_Camp__2__rDH4ZaHtp.png", href: "/tours" },
 ];
 
-export default function MomentsGallery({ title = "Top Desert safari in UAE" }: { title?: string }) {
+export default function MomentsGallery({ title = "Top Desert Safari Experiences in UAE" }: { title?: string }) {
   return (
     <section className="container moments-gallery-section" style={{ marginTop: 40 }}>
       <div className="section-header" style={{ marginBottom: 0 }}>
@@ -20,7 +21,7 @@ export default function MomentsGallery({ title = "Top Desert safari in UAE" }: {
       <div className="image-gallery moments-cards">
         {defaults.map((it) => (
           <Link key={it.title} href={it.href} className="moment-card" style={{ textDecoration: "none", color: "inherit" }}>
-            <img src={it.image} alt={it.title} />
+            <Image src={it.image} alt={it.title} width={400} height={300} className="w-full h-auto object-cover" />
             <p className="moment-card-title">{it.title}</p>
           </Link>
         ))}

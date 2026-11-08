@@ -427,7 +427,7 @@ body {
         }
         .footer-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1.5fr 1.5fr 1.5fr;
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -710,3 +710,5 @@ div.arrow-btn {
   .moments-cards .moment-card img { height: 220px; }
   .moment-card-title { font-size: 13px; }
 }
+
+@media (max-width: 768px) { .hide-mobile { display: none !important; } }

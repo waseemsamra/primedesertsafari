@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 
 type Slide = { img: string; title: string; desc: string };
@@ -44,8 +45,8 @@ export default function Hero() {
   if (!s) return null;
   return (
     <div className="container">
-      <section className="hero" style={{ position: "relative" }}>
-        <img src={s.img} alt={s.title || "Hero slide"} />
+      <section className="hero" style={{ position: "relative", minHeight: 400 }}>
+        <Image src={s.img} alt={s.title || "Hero slide"} fill priority sizes="100vw" className="object-cover" />
         <div className="hero-content">
           {s.title ? <h1>{s.title}</h1> : null}
           {s.desc ? <p>{s.desc}</p> : null}
