@@ -240,7 +240,7 @@ export default function TourDetailPage() {
                   {(packages.length ? packages : ['Standard Package', 'VIP Package']).map((v) => <option key={v} value={v}>{v}</option>)}
                 </select>
               </div>
-              <button className="btn-add-cart" type="button">Add to Cart</button>
+              <Link href="/contact" className="btn-add-cart">Add to Cart</Link>
               {tour.status && tour.status !== 'Active' && <p style={{ marginTop: 10, fontSize: 12, color: '#ef4444' }}>Currently unavailable</p>}
             </div>
           </div>
@@ -269,10 +269,10 @@ export default function TourDetailPage() {
                       {r.duration && <span className="feature-tag"><i className="fas fa-clock"></i> {r.duration}</span>}
                       {r.rating && <span className="feature-tag"><i className="fas fa-star" style={{ color: 'gold' }}></i> {r.rating}</span>}
                     </div>
-                    <div className="price-row">
-                      <div className="price"><span>From</span> {r.price != null ? `AED ${Number(r.price).toLocaleString()}` : '—'}</div>
-                      <span className="btn-book">Book now</span>
-                    </div>
+                      <div className="price-row">
+                        <div className="price"><span>From</span> {r.price != null ? `AED ${Number(r.price).toLocaleString()}` : '—'}</div>
+                        <Link href={tourHref(r)} className="btn-book">Book now</Link>
+                      </div>
                   </div>
                 </Link>
               ))}

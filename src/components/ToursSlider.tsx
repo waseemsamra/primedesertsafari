@@ -14,9 +14,9 @@ type Props = {
 };
 
 export default function ToursSlider({
-  title = "Top Desert safari in UAE",
+  title = "Top Desert Safari Experiences in UAE",
   location = null,
-  viewAllHref = "/category/Desert%20Safaris",
+  viewAllHref = "/tours",
   limit = 12,
 }: Props) {
   const [tours, setTours] = useState<Tour[]>([]);

@@ -32,7 +32,7 @@ export default function TourCard({ tour }: { tour: TourCardTour }) {
           <div className="tour-card-meta">{tour.duration || "\u00A0"}</div>
           <div className="tour-card-footer">
             <div className="tour-card-price">AED {tour.price ?? "—"}</div>
-            <button type="button" className="tour-card-btn">Book now</button>
+            <Link href={href} className="tour-card-btn">Book now</Link>
           </div>
         </div>
       </div>

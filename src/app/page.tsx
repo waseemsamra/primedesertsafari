@@ -37,9 +37,9 @@ export default function Home() {
         </p>
       </section>
       <MomentsGallery title="Top Desert Safari Experiences in UAE" />
-      <ToursSlider title="Best Desert Safari Dubai Tours" location="Dubai" viewAllHref="/category/Desert%20Safaris?location=Dubai" />
-      <ToursSlider title="Desert Safari Abu Dhabi Tours" location="Abu Dhabi" viewAllHref="/category/Desert%20Safaris?location=Abu%20Dhabi" />
-      <ToursSlider title="Desert Safari Ras Al Khaimah Tours" location="Ras Al Khaimah" viewAllHref="/category/Desert%20Safaris?location=Ras%20Al%20Khaimah" />
+      <ToursSlider title="Best Desert Safari Dubai Tours" location="Dubai" viewAllHref="/category/desert-adventures?location=Dubai" />
+      <ToursSlider title="Desert Safari Abu Dhabi Tours" location="Abu Dhabi" viewAllHref="/category/desert-adventures?location=Abu%20Dhabi" />
+      <ToursSlider title="Desert Safari Ras Al Khaimah Tours" location="Ras Al Khaimah" viewAllHref="/category/desert-adventures?location=Ras%20Al%20Khaimah" />
       <OurExperiences />
       <TrendingAttractions />
       <div dangerouslySetInnerHTML={{ __html: processedMain }} />
