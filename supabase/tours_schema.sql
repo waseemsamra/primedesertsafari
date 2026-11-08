@@ -232,3 +232,29 @@ NOTIFY pgrst, 'reload schema';
 -- Trending flag (show in homepage Trending Attractions)
 ALTER TABLE tours ADD COLUMN IF NOT EXISTS is_trending boolean default false;
 NOTIFY pgrst, 'reload schema';
+
+-- CMS: "Your Prime Desert Safari Moments" gallery images
+CREATE TABLE IF NOT EXISTS moment_items (
+  id bigint generated always as identity primary key,
+  image_url text not null,
+  alt_text text,
+  sort_order int default 0,
+  status text default 'Active',
+  created_at timestamptz default now()
+);
+ALTER TABLE moment_items ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='moment_items' AND policyname='moment_items_select_all') THEN
+    CREATE POLICY "moment_items_select_all" ON moment_items FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='moment_items' AND policyname='moment_items_insert_all') THEN
+    CREATE POLICY "moment_items_insert_all" ON moment_items FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='moment_items' AND policyname='moment_items_update_all') THEN
+    CREATE POLICY "moment_items_update_all" ON moment_items FOR UPDATE USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='moment_items' AND policyname='moment_items_delete_all') THEN
+    CREATE POLICY "moment_items_delete_all" ON moment_items FOR DELETE USING (true);
+  END IF;
+END $$;
+NOTIFY pgrst, 'reload schema';

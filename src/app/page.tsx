@@ -2,8 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import Hero from "@/components/Hero";
 import ToursSlider from "@/components/ToursSlider";
+import MomentsGallery from "@/components/MomentsGallery";
 import OurExperiences from "@/components/OurExperiences";
 import TrendingAttractions from "@/components/TrendingAttractions";
+import PrimeMomentsGallery from "@/components/PrimeMomentsGallery";
 
 export default function Home() {
   const html = fs.readFileSync(
@@ -25,7 +27,7 @@ export default function Home() {
     <>
       <style dangerouslySetInnerHTML={{ __html: style }} />
       <Hero />
-      <ToursSlider title="Top Desert safari in UAE" />
+      <MomentsGallery title="Top Desert safari in UAE" />
       <ToursSlider title="Top Desert safari in Dubai" location="Dubai" viewAllHref="/category/Desert%20Safaris?location=Dubai" />
       <ToursSlider title="Top Desert safari in Abu Dhabi" location="Abu Dhabi" viewAllHref="/category/Desert%20Safaris?location=Abu%20Dhabi" />
       <ToursSlider title="Top Desert safari in Ras Al Khaimah" location="Ras Al Khaimah" viewAllHref="/category/Desert%20Safaris?location=Ras%20Al%20Khaimah" />
@@ -36,9 +38,11 @@ export default function Home() {
           __html: main
             .replace(/<!-- Hero Section -->[\s\S]*?<!-- Desert Safaris Section -->/, "<!-- Desert Safaris Section -->")
             .replace(/<!-- Desert Safaris Section -->[\s\S]*?<!-- Circular Experiences Section -->/, "<!-- Circular Experiences Section -->")
-            .replace(/<!-- Circular Experiences Section -->[\s\S]*?<!-- Split Banners Section -->/, "<!-- Split Banners Section -->"),
+            .replace(/<!-- Circular Experiences Section -->[\s\S]*?<!-- Split Banners Section -->/, "<!-- Split Banners Section -->")
+            .replace(/<!-- Your Prime Desert Safari Moments \(Gallery\) -->[\s\S]*$/, ""),
         }}
       />
+      <PrimeMomentsGallery />
     </>
   );
 }

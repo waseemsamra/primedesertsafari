@@ -53,6 +53,11 @@ export default function Sidebar() {
                   <i className="fas fa-circle-notch"></i> Our Experiences
                 </Link>
               </li>
+              <li>
+                <Link href="/admin/cms/moments" className={isActive('/admin/cms/moments') ? 'active' : ''}>
+                  <i className="fas fa-photo-video"></i> Moments Gallery
+                </Link>
+              </li>
             </ul>
           )}
         </li>

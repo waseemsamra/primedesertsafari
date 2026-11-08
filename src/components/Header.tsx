@@ -35,8 +35,13 @@ export default function Header() {
       <header>
         <div className="container nav-container">
           <Link href="/" className="logo" aria-label="Prime Desert Safari home">
-            <img src="/Prime-Desert-Safari-Logo.png" alt="Prime Desert Safari" className="brand-logo" />
+            <img src="/Prime-Desert-Logo.png" alt="Prime Desert Safari" className="brand-logo" />
           </Link>
+
+          <div className="search-bar">
+            <input type="text" placeholder="Find my feeling" />
+            <i className="fas fa-search"></i>
+          </div>
 
           <div className="nav-actions">
             <Link href="/admin/login" aria-label="Sign in" className="nav-signin">
@@ -55,11 +60,6 @@ export default function Header() {
           >
             <i className={open ? "fas fa-times" : "fas fa-bars"}></i>
           </button>
-
-          <div className="search-bar">
-            <input type="text" placeholder="Find my feeling" />
-            <i className="fas fa-search"></i>
-          </div>
 
         </div>
 
