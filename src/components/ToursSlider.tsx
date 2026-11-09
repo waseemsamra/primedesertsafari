@@ -9,6 +9,7 @@ type Tour = any;
 type Props = {
   title?: string;
   location?: string | null; // null/undefined = all
+  category?: string | null; // optional category keyword filter
   viewAllHref?: string;
   limit?: number;
 };
@@ -16,6 +17,7 @@ type Props = {
 export default function ToursSlider({
   title = "Top Desert Safari Experiences in UAE",
   location = null,
+  category = null,
   viewAllHref = "/tours",
   limit = 12,
 }: Props) {
@@ -27,32 +29,23 @@ export default function ToursSlider({
     let cancelled = false;
     (async () => {
       setLoading(true);
-      let q = supabase.from("tours").select("*").limit(limit);
-      // Prefer explicit location column; fall back client-side if needed
-      if (location) q = q.or(`location.eq.${location},category.ilike.%${location}%`);
+      let q = supabase.from("tours").select("*").limit(limit * 4);
+      if (location) q = q.eq("location", location);
       const { data } = await q;
       if (cancelled) return;
       let rows = (data ?? []) as Tour[];
-      if (location) {
-        const loc = location.toLowerCase();
-        rows = rows.filter((t) =>
-          String(t.location || "").toLowerCase() === loc ||
-          String(t.category || "").toLowerCase().includes(loc)
-        );
-        // If DB filter missed (e.g. location column missing), fetch broader set and filter
-        if (rows.length === 0) {
-          const { data: all } = await supabase.from("tours").select("*").limit(50);
-          rows = ((all ?? []) as Tour[]).filter((t) =>
-            String(t.location || "").toLowerCase() === loc ||
-            String(t.category || "").toLowerCase().includes(loc)
-          ).slice(0, limit);
-        }
-      }
-      setTours(rows);
+      const loc = (location || "").toLowerCase();
+      const cat = (category || "").toLowerCase();
+      rows = rows.filter((t) => {
+        const locOk = !loc || String(t.location || "").toLowerCase() === loc;
+        const catOk = !cat || String(t.category || "").toLowerCase().includes(cat);
+        return locOk && catOk;
+      });
+      setTours(rows.slice(0, limit));
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [location, limit]);
+  }, [location, category, limit]);
 
   const scroll = (d: number) => ref.current?.scrollBy({ left: d, behavior: "smooth" });
 

@@ -48,6 +48,16 @@ ALTER TABLE tours ADD COLUMN IF NOT EXISTS package_options jsonb DEFAULT '[]'::j
 -- Optional video
 ALTER TABLE tours ADD COLUMN IF NOT EXISTS video_url text;
 
+-- SEO fields (meta tags for Google ranking)
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS meta_title text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS meta_description text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS meta_keywords text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS og_title text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS og_description text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS og_image text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS canonical_url text;
+ALTER TABLE tours ADD COLUMN IF NOT EXISTS focus_keyword text;
+
 -- RLS (adjust for production)
 ALTER TABLE tours ENABLE ROW LEVEL SECURITY;
 DO $$ BEGIN

@@ -286,6 +286,7 @@ export default function AdminDashboard() {
                       }} /></td>
                       <td className="action-btns">
                         <Link className="icon-btn btn-edit" href={`/admin/add-tour?id=${tour.id}`} title="Edit"><i className="fas fa-edit"></i></Link>
+                        <Link className="icon-btn" href={`/admin/add-tour?clone=${tour.id}`} title="Clone Tour" style={{ background: '#dcfce7', color: '#166534' }}><i className="fas fa-copy"></i></Link>
                         <button className="icon-btn btn-delete" onClick={() => deleteTour(tour.id)} title="Delete" type="button"><i className="fas fa-trash"></i></button>
                       </td>
                     </tr>
@@ -374,7 +375,7 @@ export default function AdminDashboard() {
             <div className="form-card">
               <h3 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>Website Settings</h3>
               <div className="form-row">
-                <div className="form-group"><label>Site Name</label><input type="text" defaultValue="Arabian Adventures" /></div>
+                <div className="form-group"><label>Site Name</label><input type="text" defaultValue="Madinat al Nojoom" /></div>
                 <div className="form-group"><label>Contact Email</label><input type="email" defaultValue="info@arabianadventures.ae" /></div>
               </div>
               <div className="form-row">

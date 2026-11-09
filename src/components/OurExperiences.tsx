@@ -9,7 +9,6 @@ const slugify = (s?: string | null) => String(s || "").toLowerCase().trim().repl
 const fallback: Category[] = [
   { id: 1, name: "Desert Safaris", image_url: "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?q=80&w=400&auto=format&fit=crop" },
   { id: 2, name: "Attractions", image_url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=400&auto=format&fit=crop" },
-  { id: 3, name: "Sports Events", image_url: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=400&auto=format&fit=crop" },
   { id: 4, name: "City Tours", image_url: "https://images.unsplash.com/photo-1518684079-3c830dcef090?q=80&w=400&auto=format&fit=crop" },
   { id: 5, name: "Cruise & Boat Tours", image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=400&auto=format&fit=crop" },
   { id: 6, name: "Water & Theme Parks", image_url: "https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?q=80&w=400&auto=format&fit=crop" },

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -35,6 +36,15 @@ type Tour = {
   vehicle_options?: string[] | null;
   package_options?: string[] | null;
   video_url?: string | null;
+  // SEO fields
+  meta_title?: string | null;
+  meta_description?: string | null;
+  meta_keywords?: string | null;
+  og_title?: string | null;
+  og_description?: string | null;
+  og_image?: string | null;
+  canonical_url?: string | null;
+  focus_keyword?: string | null;
 };
 
 const asArray = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
@@ -103,6 +113,15 @@ export default function TourDetailPage() {
 
   return (
     <div className="tour-detail-page">
+      <Head>
+        <title>{tour.meta_title || tour.title || 'Prime Desert Safari Tour'}</title>
+        <meta name="description" content={tour.meta_description || tour.short_description || ''} />
+        <meta name="keywords" content={tour.meta_keywords || tour.focus_keyword || ''} />
+        <meta property="og:title" content={tour.og_title || tour.meta_title || tour.title || 'Prime Desert Safari Tour'} />
+        <meta property="og:description" content={tour.og_description || tour.meta_description || tour.short_description || ''} />
+        <meta property="og:image" content={tour.og_image || tour.image_url || ''} />
+        <link rel="canonical" href={tour.canonical_url || `https://primedesertsafari.com/tour/${tour.slug || tour.id}`} />
+      </Head>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       <div className="container">
@@ -113,7 +132,7 @@ export default function TourDetailPage() {
         </div>
 
         <h1 className="page-title">{tour.title || 'Tour'}</h1>
-        <p className="sub-title">By Arabian Adventures</p>
+        <p className="sub-title">By Madinat al Nojoom</p>
 
         <div className="gallery-wrapper">
           <div className="gallery-main">
@@ -271,7 +290,7 @@ export default function TourDetailPage() {
                     </div>
                       <div className="price-row">
                         <div className="price"><span>From</span> {r.price != null ? `AED ${Number(r.price).toLocaleString()}` : '—'}</div>
-                        <Link href={tourHref(r)} className="btn-book">Book now</Link>
+                        <button className="btn-book" onClick={(e) => { e.stopPropagation(); window.location.href = tourHref(r); }}>Book now</button>
                       </div>
                   </div>
                 </Link>

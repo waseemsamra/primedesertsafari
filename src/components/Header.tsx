@@ -22,12 +22,10 @@ export default function Header() {
     { href: "/tours", label: "All Tours" },
     { href: "/category/desert-adventures", label: "Desert Adventures" },
     { href: "/category/attractions", label: "Attractions" },
-    { href: "/category/sports-events", label: "Sports Events" },
     { href: "/category/city-tours", label: "City Tours" },
     { href: "/category/cruise-and-boat-tours", label: "Cruise and Boat Tours" },
     { href: "/category/waterparks-and-theme-parks", label: "Waterparks & Theme Parks" },
     { href: "/category/transport", label: "Transport" },
-    { href: "/about", label: "Why us" },
   ];
 
   return (

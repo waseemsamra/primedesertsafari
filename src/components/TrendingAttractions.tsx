@@ -16,8 +16,11 @@ export default function TrendingAttractions() {
         .eq("status", "Active")
         .eq("is_trending", true)
         .order("id", { ascending: false })
-        .limit(12);
-      if (!error && data) setTours(data as TourCardTour[]);
+        .limit(60);
+      if (!error && data) {
+        const desert = (data as TourCardTour[]).filter((t) => String(t.category || "").toLowerCase().includes("desert"));
+        setTours(desert);
+      }
       setLoaded(true);
     })();
   }, []);

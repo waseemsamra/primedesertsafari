@@ -47,16 +47,31 @@ async function uploadToImageKit(file: File): Promise<string> {
   return json.url as string;
 }
 
+async function callAI(prompt: string): Promise<string> {
+  const res = await fetch('/api/generate-ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+  const json = await res.json();
+  if (!res.ok || !json.content) throw new Error(json.error || 'AI generation failed');
+  return json.content;
+}
+
 function AddTourInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('id');
+  const cloneId = searchParams.get('clone');
   const isEdit = !!editId;
+  const isClone = !!cloneId && !editId;
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [loading, setLoading] = useState(!!editId);
+  const [loading, setLoading] = useState(!!editId || !!cloneId);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState('');
@@ -79,6 +94,16 @@ function AddTourInner() {
   const [fullDescription, setFullDescription] = useState('');
   const [pickupInfo, setPickupInfo] = useState('Hotel or residence pick-up included from anywhere in Dubai');
   const [priceNote, setPriceNote] = useState('Price varies by vehicle, group size and other selections');
+
+  // SEO fields
+  const [seoMetaTitle, setSeoMetaTitle] = useState('');
+  const [seoMetaDescription, setSeoMetaDescription] = useState('');
+  const [seoMetaKeywords, setSeoMetaKeywords] = useState('');
+  const [seoOgTitle, setSeoOgTitle] = useState('');
+  const [seoOgDescription, setSeoOgDescription] = useState('');
+  const [seoOgImage, setSeoOgImage] = useState('');
+  const [seoCanonicalUrl, setSeoCanonicalUrl] = useState('');
+  const [seoFocusKeyword, setSeoFocusKeyword] = useState('');
 
   // Gallery with cover support
   const [gallery, setGallery] = useState<GalleryItem[]>([{ url: '' }]);
@@ -130,16 +155,17 @@ function AddTourInner() {
   }, []);
 
   useEffect(() => {
-    if (!editId) return;
+    const loadId = editId || cloneId;
+    if (!loadId) return;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('tours').select('*').eq('id', editId).single();
+      const { data, error } = await supabase.from('tours').select('*').eq('id', loadId).single();
       setLoading(false);
       if (error || !data) { setMsg(`Error: ${error?.message || 'Tour not found'}`); return; }
-      setTitle(data.title || '');
+      setTitle(isClone ? (data.title || '') + ' (Copy)' : data.title || '');
       const existingSlug = data.slug || '';
       setSlug(existingSlug || slugify(data.title || ''));
-      setSlugTouched(!!existingSlug);
+      setSlugTouched(!!existingSlug && !isClone);
       setCategory(data.category || '');
       setLocation(data.location || '');
       setLocationId(data.location_id || null);
@@ -170,8 +196,16 @@ function AddTourInner() {
       if (vo.length) setVehicleOptions(vo);
       if (po.length) setPackageOptions(po);
       setVideoUrl(data.video_url || '');
+      setSeoMetaTitle(data.meta_title || '');
+      setSeoMetaDescription(data.meta_description || '');
+      setSeoMetaKeywords(data.meta_keywords || '');
+      setSeoOgTitle(data.og_title || '');
+      setSeoOgDescription(data.og_description || '');
+      setSeoOgImage(data.og_image || '');
+      setSeoCanonicalUrl(data.canonical_url || '');
+      setSeoFocusKeyword(data.focus_keyword || '');
     })();
-  }, [editId]);
+  }, [editId, cloneId, isClone]);
 
   useEffect(() => { if (!slugTouched) setSlug(slugify(title)); }, [title, slugTouched]);
 
@@ -240,14 +274,135 @@ function AddTourInner() {
     return { urls: [coverItem.url.trim(), ...rest.map((g) => g.url.trim())], cover: coverItem.url.trim() };
   }, [gallery]);
 
+  const generateAllContent = async () => {
+    if (!title.trim()) {
+      setMsg('Error: Please enter a tour title first.');
+      return;
+    }
+    setAiGenerating(true);
+    setMsg('Generating Google Ads-optimized content...');
+    try {
+      const productName = title.trim();
+      const loc = location || 'Dubai, UAE';
+      const cat = category || 'Tour';
+      const dur = duration || 'Full day';
+      const prc = price || 'TBA';
+
+      const basePrompt = `Product/Tour Name: "${productName}". Location: ${loc}. Category: ${cat}. Duration: ${dur}. Price: AED ${prc}.`;
+
+      // Short description (Google Ads headline friendly)
+      const shortDesc = await callAI(`${basePrompt}\n\nWrite a punchy short description (2-3 sentences) for this ${productName} tour listing. Include the exact product name and location. Make it conversion-focused for Google Ads. Return only the description text.`);
+      setShortDescription(shortDesc);
+
+      // Full description (SEO + Google Ads landing page)
+      const fullDesc = await callAI(`${basePrompt}\n\nWrite a comprehensive SEO-optimized full description (500-700 words) for "${productName}" in ${loc}. Include the exact product name naturally 3-5 times. Cover: what to expect, itinerary highlights, inclusions, best time to visit, why book, and a strong call-to-action. Use H2 headings and bullet points. Optimize for Google search ranking and Google Ads landing page quality score. Return only the description text.`);
+      setFullDescription(fullDesc);
+
+      // Features
+      const featuresText = await callAI(`${basePrompt}\n\nList 6 key features/inclusions of this "${productName}" tour as a simple comma-separated list. Return only the comma-separated list, no numbering.`);
+      const featureItems = featuresText.split(',').map((f) => f.trim()).filter(Boolean).map((label) => ({ icon: 'fas fa-check-circle', label }));
+      setFeatures(featureItems);
+
+      // Itinerary
+      const itineraryText = await callAI(`${basePrompt}\n\nCreate a day itinerary with 4-6 steps for "${productName}". Each step: title, short description, duration. Format as: Title | Description | Duration. One per line. Return only the itinerary lines.`);
+      const itinerarySteps = itineraryText.split('\n').map((line) => {
+        const parts = line.split('|').map((p) => p.trim()).filter(Boolean);
+        return parts.length >= 2 ? { title: parts[0], description: parts[1] || '', duration: parts[2] || '' } : null;
+      }).filter(Boolean) as ItineraryStep[];
+      if (itinerarySteps.length) setItinerary(itinerarySteps);
+
+      // Highlights
+      const highlightsText = await callAI(`${basePrompt}\n\nList 6 highlights of this "${productName}" tour as a simple comma-separated list. Return only the comma-separated list.`);
+      setHighlightsText(highlightsText.split(',').map((h) => h.trim()).filter(Boolean).join('\n'));
+
+      // Know before
+      const knowBeforeText = await callAI(`${basePrompt}\n\nWrite "Know Before You Go" advice (3-5 bullet points) for "${productName}" covering what to bring, dress code, timing, restrictions. Return only the bullet points.`);
+      setKnowBefore(knowBeforeText);
+
+      // Age policy
+      const agePolicyText = await callAI(`${basePrompt}\n\nWrite an age policy (2-3 sentences) for "${productName}". Return only the policy text.`);
+      setAgePolicy(agePolicyText);
+
+      // Cancellation policy
+      const cancelPolicyText = await callAI(`${basePrompt}\n\nWrite a cancellation policy (2-3 sentences) for "${productName}". Return only the policy text.`);
+      setCancellationPolicy(cancelPolicyText);
+
+      // Vehicle options
+      const vehicleText = await callAI(`${basePrompt}\n\nSuggest 3-4 vehicle/transport options for "${productName}" as a comma-separated list. Return only the list.`);
+      setVehicleOptions(vehicleText.split(',').map((v) => v.trim()).filter(Boolean));
+
+      // Package options
+      const packageText = await callAI(`${basePrompt}\n\nSuggest 3 package tiers (Standard, VIP, Premium) for "${productName}" as a comma-separated list. Return only the list.`);
+      setPackageOptions(packageText.split(',').map((p) => p.trim()).filter(Boolean));
+
+      // === GOOGLE ADS SEO FIELDS ===
+      // Focus keyword = product name + location (exact match for Google Ads)
+      const seoFocusKw = await callAI(`Suggest the PRIMARY focus keyword (single exact phrase) for the Google Ads campaign of "${productName}" in ${loc}. Format: "[Product Name] [Location]" e.g. "Desert Safari Dubai". Return only the keyword phrase.`);
+      setSeoFocusKeyword(seoFocusKw);
+
+      // SEO meta title optimized for Google Ads / organic
+      const seoTitle = await callAI(`Write an SEO meta title (under 60 chars) for "${productName}" tour in ${loc}. Lead with the exact product name. Include location and a booking intent word (Book, Price, Deals). Return only the title.`);
+      setSeoMetaTitle(seoTitle);
+
+      // SEO meta description (Google Ads headline + description style)
+      const seoDesc = await callAI(`Write an SEO meta description (under 160 chars) for "${productName}" tour in ${loc}. Include exact product name, location, price if known, and strong CTA ("Book now", "Best price", "Free cancellation"). Optimize for Google Ads quality score. Return only the description.`);
+      setSeoMetaDescription(seoDesc);
+
+      // Meta keywords (Google Ads keyword groups)
+      const seoKw = await callAI(`Suggest 12-15 Google Ads keywords (comma-separated) for "${productName}" tour in ${loc}. Include: exact match product name, phrase match variations, broad match location keywords, and high-intent booking terms (cheap, best, price, booking, deals, online). Return only the comma-separated keywords.`);
+      setSeoMetaKeywords(seoKw);
+
+      // OG Title (social + ads)
+      const seoOgTitle = await callAI(`Write an Open Graph / social title (under 70 chars) for "${productName}" tour in ${loc}. Lead with product name. Return only the title.`);
+      setSeoOgTitle(seoOgTitle);
+
+      // OG Description
+      const seoOgDesc = await callAI(`Write an Open Graph / social description (under 160 chars) for "${productName}" tour in ${loc}. Include CTA. Return only the description.`);
+      setSeoOgDescription(seoOgDesc);
+
+      // Canonical URL
+      if (!seoCanonicalUrl) {
+        const tourSlug = slug || slugify(title);
+        setSeoCanonicalUrl(`https://primedesertsafari.com/tour/${tourSlug}`);
+      }
+
+      setMsg('Google Ads-optimized content generated! Review and adjust, then Publish.');
+    } catch (err: any) {
+      setMsg(`Error: ${err?.message || 'AI generation failed'}`);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMsg('');
     const cleanItinerary = itinerary.filter((s) => s.title.trim() || s.description.trim());
+    let savedId = editId;
+    let savedSlug = slugify(slug || title).trim() || null;
+
+    // Auto-resolve duplicate slug conflicts so saving never fails on slug uniqueness
+    if (savedSlug) {
+      let attempt = savedSlug;
+      let counter = 1;
+      while (true) {
+        const { data: existing, error: dupError } = await supabase
+          .from("tours")
+          .select("id,title,slug")
+          .eq("slug", attempt);
+        if (dupError) break;
+        const conflict = existing && existing.find((t) => String(t.id) !== String(editId || ''));
+        if (!conflict) { savedSlug = attempt; break; }
+        attempt = `${savedSlug}-${counter}`;
+        counter++;
+        if (counter > 20) break;
+      }
+    }
+
     const payload = {
       title: title.trim(),
-      slug: slugify(slug || title).trim() || null,
+      slug: savedSlug || null,
       category: category || null,
       location: location || null,
       location_id: locationId || (locations.find((l)=>l.name===location)?.id ?? null),
@@ -274,12 +429,42 @@ function AddTourInner() {
       vehicle_options: vehicleOptions,
       package_options: packageOptions,
       video_url: videoUrl.trim() || null,
+      meta_title: seoMetaTitle.trim() || null,
+      meta_description: seoMetaDescription.trim() || null,
+      meta_keywords: seoMetaKeywords.trim() || null,
+      og_title: seoOgTitle.trim() || null,
+      og_description: seoOgDescription.trim() || null,
+      og_image: seoOgImage.trim() || null,
+      canonical_url: seoCanonicalUrl.trim() || null,
+      focus_keyword: seoFocusKeyword.trim() || null,
     };
 
     let error;
-    let savedId = editId;
-    let savedSlug = slugify(slug || title).trim() || null;
-    if (isEdit && editId) {
+
+    // Auto-resolve duplicate slug conflicts so saving never fails on slug uniqueness
+    if (savedSlug) {
+      let attempt = savedSlug;
+      let counter = 1;
+      while (true) {
+        const { data: existing, error: dupError } = await supabase
+          .from("tours")
+          .select("id,title,slug")
+          .eq("slug", attempt);
+        if (dupError) break;
+        const conflict = existing && existing.find((t) => String(t.id) !== String(editId || ''));
+        if (!conflict) { savedSlug = attempt; break; }
+        attempt = `${savedSlug}-${counter}`;
+        counter++;
+        if (counter > 20) break;
+      }
+    }
+
+    if (isClone) {
+      const res = await supabase.from('tours').insert(payload).select('id,slug').single();
+      error = res.error;
+      savedId = res.data?.id ? String(res.data.id) : null;
+      savedSlug = res.data?.slug || savedSlug;
+    } else if (isEdit && editId) {
       ({ error } = await supabase.from('tours').update(payload).eq('id', editId));
     } else {
       const res = await supabase.from('tours').insert(payload).select('id,slug').single();
@@ -306,14 +491,19 @@ function AddTourInner() {
       <div className="admin-wrapper">
         <Sidebar />
         <main className="main-content">
-          <Topbar title={isEdit ? 'Edit Tour' : 'Add New Tour'} />
+          <Topbar title={isClone ? 'Clone Tour' : isEdit ? 'Edit Tour' : 'Add New Tour'} />
           <div className="page-container" style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
             <form onSubmit={handleSubmit}>
               <div className="form-section">
                 <h3 className="section-title"><i className="fas fa-info-circle"></i> Basic Information</h3>
                 <div className="form-row">
                   <div className="form-group"><label>Tour Title</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Evening Desert Safari in Dubai" required /></div>
-                  <div className="form-group"><label>Slug</label><input type="text" value={slug} onChange={(e) => { const v = e.target.value; setSlug(v); setSlugTouched(!!v.trim()); }} placeholder="overnight-desert-safari-ras-al-khaimah" /><span className="help-text">Auto-generates from title. Clear it to auto-generate again.</span></div>
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'end', gap: 8 }}>
+                    <input type="text" value={slug} onChange={(e) => { const v = e.target.value; setSlug(v); setSlugTouched(!!v.trim()); }} placeholder="overnight-desert-safari-ras-al-khaimah" style={{ flex: 1 }} /><span className="help-text">Auto-generates from title.</span>
+                    <button type="button" className="btn-sm btn-add" onClick={generateAllContent} disabled={aiGenerating} style={{ marginLeft: 6 }}>
+                      <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-magic'}`}></i> {aiGenerating ? 'AI...' : 'AI Fill All'}
+                    </button>
+                  </div>
                 </div>
                 <div className="form-row three-col">
                   <div className="form-group"><label>Category</label><select value={category} onChange={(e) => setCategory(e.target.value)}><option value="">Select Category...</option>{categoryOptions.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}{category && !categoryOptions.some((c)=>c.name===category) ? <option value={category}>{category}</option> : null}</select></div>
@@ -339,6 +529,22 @@ function AddTourInner() {
                 </div>
                 <div className="form-group" style={{ marginBottom: 20 }}><label>Short Description (About)</label><textarea rows={3} value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} /></div>
                 <div className="form-group"><label>Full Description</label><textarea rows={4} value={fullDescription} onChange={(e) => setFullDescription(e.target.value)} /></div>
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title"><i className="fas fa-search"></i> SEO Settings (Google Ranking)</h3>
+                <div className="form-row three-col">
+                  <div className="form-group"><label>Meta Title</label><input type="text" value={seoMetaTitle} onChange={(e) => setSeoMetaTitle(e.target.value)} placeholder="e.g. Evening Desert Safari Dubai - Book Now" /></div>
+                  <div className="form-group"><label>Focus Keyword</label><input type="text" value={seoFocusKeyword} onChange={(e) => setSeoFocusKeyword(e.target.value)} placeholder="e.g. desert safari dubai" /></div>
+                  <div className="form-group"><label>Meta Keywords</label><input type="text" value={seoMetaKeywords} onChange={(e) => setSeoMetaKeywords(e.target.value)} placeholder="e.g. desert safari, dubai tours, adventure" /></div>
+                </div>
+                <div className="form-row three-col">
+                  <div className="form-group"><label>OG Title</label><input type="text" value={seoOgTitle} onChange={(e) => setSeoOgTitle(e.target.value)} placeholder="e.g. Evening Desert Safari Dubai" /></div>
+                  <div className="form-group"><label>OG Description</label><input type="text" value={seoOgDescription} onChange={(e) => setSeoOgDescription(e.target.value)} placeholder="e.g. Experience the best desert safari in Dubai" /></div>
+                  <div className="form-group"><label>Canonical URL</label><input type="text" value={seoCanonicalUrl} onChange={(e) => setSeoCanonicalUrl(e.target.value)} placeholder="https://primedesertsafari.com/tour/..." /></div>
+                </div>
+                <div className="form-group"><label>Meta Description</label><textarea rows={2} value={seoMetaDescription} onChange={(e) => setSeoMetaDescription(e.target.value)} placeholder="SEO description for search results" /></div>
+                <div className="form-group"><label>OG Image</label><input type="text" value={seoOgImage} onChange={(e) => setSeoOgImage(e.target.value)} placeholder="https://...og-image.jpg" /></div>
               </div>
 
               <div className="form-section">

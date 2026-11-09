@@ -78,11 +78,11 @@ export default function AdminLogin() {
         <div className="login-image">
           <div className="image-content">
             <h2>Welcome Back, Admin.</h2>
-            <p>Manage your Arabian Adventures, bookings, and safaris from one dashboard.</p>
+            <p>Manage your Madinat al Nojoom bookings and safaris from one dashboard.</p>
           </div>
         </div>
         <div className="login-form-wrapper">
-          <div className="logo"><i className="fas fa-mountain"></i> Arabian Adventures</div>
+          <div className="logo"><i className="fas fa-mountain"></i> Madinat al Nojoom</div>
           <h1>Admin Login</h1>
           <p>Please enter your credentials to access the dashboard.</p>
           <form onSubmit={submit}>

@@ -1,19 +1,19 @@
 "use client";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import TourCard from "@/components/TourCard";
 
 type Tour = any;
 
 const heroImages: Record<string, string> = {
-  "desert-adventures": "https://images.unsplash.com/photo-1547234935-80c7145ec969?q=80&w=1600&auto=format&fit=crop",
-  "attractions": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop",
-  "sports-events": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1600&auto=format&fit=crop",
-  "city-tours": "https://images.unsplash.com/photo-1518684079-3c830dcef090?q=80&w=1600&auto=format&fit=crop",
-  "cruise-and-boat-tours": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop",
-  "waterparks-and-theme-parks": "https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?q=80&w=1600&auto=format&fit=crop",
-  "transport": "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=1600&auto=format&fit=crop",
+  "desert-adventures": "https://ik.imagekit.io/piwakgkp8/UAE_Desert_Adventures_Await_Om684eaXx.png",
+  "attractions": "https://ik.imagekit.io/piwakgkp8/Dubai_at_Golden_Hour__Iconic_Attractions_6kvriTNqY.png",
+  "city-tours": "https://ik.imagekit.io/piwakgkp8/Dubai_City_Tour__Discover_Iconic_Dubai_J6W-SdcNW.png",
+  "cruise-and-boat-tours": "https://ik.imagekit.io/piwakgkp8/Dubai_Sunset_Cruise_Adventures_zN0Ffc5l7.png",
+  "waterparks-and-theme-parks": "https://ik.imagekit.io/piwakgkp8/UAE_Waterparks_and_Theme_Parks_tMC9Dp_WA.png",
+  "transport": "https://ik.imagekit.io/piwakgkp8/Dubai_Transport_Services_Banner_WUZ7IvyA1.png",
 };
 const defaultHero = "https://images.unsplash.com/photo-1542856391-010fb87dcfed?q=80&w=1600&auto=format&fit=crop";
 
@@ -33,7 +33,6 @@ function CategoryInner() {
     const map: Record<string, string> = {
       "desert-adventures": "Desert Adventures",
       "attractions": "Attractions",
-      "sports-events": "Sports Events",
       "city-tours": "City Tours",
       "cruise-and-boat-tours": "Cruise and Boat Tours",
       "waterparks-and-theme-parks": "Waterparks & Theme Parks",
@@ -56,7 +55,6 @@ function CategoryInner() {
         if (s === "desert-adventures") return cat.includes("desert") || catSlug.includes("desert");
         if (s === "waterparks-and-theme-parks") return cat.includes("water") || cat.includes("theme") || catSlug.includes("waterpark");
         if (s === "cruise-and-boat-tours") return cat.includes("cruise") || cat.includes("boat");
-        if (s === "sports-events") return cat.includes("sport") || cat.includes("event");
         return catSlug === s || cat.includes(s.replace(/-/g, " ")) || slugify(title).toLowerCase() === catSlug;
       });
       if (filtered.length === 0) {
@@ -77,12 +75,8 @@ function CategoryInner() {
 
   return (
     <main>
-      <section className="container" style={{ position: "relative", height: 320, overflow: "hidden", borderRadius: 20, marginTop: 20, background: "#fff" }}>
-        <img src={hero} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6, color: "#fff", background: "rgba(0,0,0,0.4)", padding: 20, textAlign: "center" }}>
-          <h1 style={{ fontSize: 36, fontWeight: 700, margin: 0 }}>{title}{locationFilter ? ` in ${locationFilter}` : ""}</h1>
-          <p style={{ margin: 0, opacity: 0.95 }}>Explore our curated experiences.</p>
-        </div>
+      <section className="container" style={{ position: "relative", overflow: "hidden", borderRadius: 20, marginTop: 20, background: "#fff", height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Image src={hero} alt={title} width={1300} height={420} sizes="(max-width: 768px) 100vw, 1300px" style={{ objectFit: "contain", width: "100%", height: "auto", objectPosition: "center", display: "block" }} />
       </section>
       <div className="container" style={{ padding: "40px 20px" }}>
         {loading ? (

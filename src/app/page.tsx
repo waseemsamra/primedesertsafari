@@ -6,6 +6,7 @@ import MomentsGallery from "@/components/MomentsGallery";
 import OurExperiences from "@/components/OurExperiences";
 import TrendingAttractions from "@/components/TrendingAttractions";
 import PrimeMomentsGallery from "@/components/PrimeMomentsGallery";
+import CityTours from "@/components/CityTours";
 import HomeFaq from "@/components/HomeFaq";
 
 const html = fs.readFileSync(path.join(process.cwd(), "public", "primedesertsafari.html"), "utf8");
@@ -24,6 +25,7 @@ const processedMain = main
   .replace(/<!-- Hero Section -->[\s\S]*?<!-- Desert Safaris Section -->/, "<!-- Desert Safaris Section -->")
   .replace(/<!-- Desert Safaris Section -->[\s\S]*?<!-- Circular Experiences Section -->/, "<!-- Circular Experiences Section -->")
   .replace(/<!-- Circular Experiences Section -->[\s\S]*?<!-- Split Banners Section -->/, "<!-- Split Banners Section -->")
+  .replace(/<!-- Top City Tours Section -->[\s\S]*?<!-- Desert Safari Experiences Banner -->/, "<!-- Desert Safari Experiences Banner -->")
   .replace(/<!-- Your Prime Desert Safari Moments \(Gallery\) -->[\s\S]*$/, "");
 
 export default function Home() {
@@ -37,11 +39,12 @@ export default function Home() {
         </p>
       </section>
       <MomentsGallery title="Top Desert Safari Experiences in UAE" />
-      <ToursSlider title="Best Desert Safari Dubai Tours" location="Dubai" viewAllHref="/category/desert-adventures?location=Dubai" />
-      <ToursSlider title="Desert Safari Abu Dhabi Tours" location="Abu Dhabi" viewAllHref="/category/desert-adventures?location=Abu%20Dhabi" />
-      <ToursSlider title="Desert Safari Ras Al Khaimah Tours" location="Ras Al Khaimah" viewAllHref="/category/desert-adventures?location=Ras%20Al%20Khaimah" />
+      <ToursSlider title="Best Desert Safari Dubai Tours" location="Dubai" category="desert" viewAllHref="/category/desert-adventures?location=Dubai" />
+      <ToursSlider title="Desert Safari Abu Dhabi Tours" location="Abu Dhabi" category="desert" viewAllHref="/category/desert-adventures?location=Abu%20Dhabi" />
+      <ToursSlider title="Desert Safari Ras Al Khaimah Tours" location="Ras Al Khaimah" category="desert" viewAllHref="/category/desert-adventures?location=Ras%20Al%20Khaimah" />
       <OurExperiences />
       <TrendingAttractions />
+      <CityTours />
       <div dangerouslySetInnerHTML={{ __html: processedMain }} />
       <PrimeMomentsGallery />
       <HomeFaq />
