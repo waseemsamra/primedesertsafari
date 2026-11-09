@@ -591,15 +591,15 @@ function AddTourInner() {
                 <h3 className="section-title"><i className="fas fa-info-circle"></i> Basic Information</h3>
                 <div className="form-row">
                   <div className="form-group"><label>Tour Title</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Evening Desert Safari in Dubai" required /></div>
-                  <div className="form-group" style={{ display: 'flex', alignItems: 'end', gap: 8 }}>
-                    <input type="text" value={slug} onChange={(e) => { const v = e.target.value; setSlug(v); setSlugTouched(!!v.trim()); }} placeholder="overnight-desert-safari-ras-al-khaimah" style={{ flex: 1 }} /><span className="help-text">Auto-generates from title.</span>
-                    <button type="button" className="btn-sm btn-add" onClick={generateAllContent} disabled={aiGenerating} style={{ marginLeft: 6 }}>
-                      <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-magic'}`}></i> {aiGenerating ? 'AI...' : 'AI Fill All'}
-                    </button>
-                    <button type="button" className="btn-sm btn-add" onClick={fillCompetitiveData} disabled={aiGenerating} style={{ marginLeft: 6 }}>
-                      <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-chart-line'}`}></i> {aiGenerating ? '...' : 'Fill Competitive Data'}
-                    </button>
-                  </div>
+                  <div className="form-group"><label>Slug</label><input type="text" value={slug} onChange={(e) => { const v = e.target.value; setSlug(v); setSlugTouched(!!v.trim()); }} placeholder="overnight-desert-safari-ras-al-khaimah" /><span className="help-text">Auto-generates from title.</span></div>
+                </div>
+                <div className="form-row ai-actions" style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                  <button type="button" className="btn-sm btn-add" onClick={generateAllContent} disabled={aiGenerating}>
+                    <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-magic'}`}></i> {aiGenerating ? 'AI...' : 'AI Fill All'}
+                  </button>
+                  <button type="button" className="btn-sm btn-add" onClick={fillCompetitiveData} disabled={aiGenerating}>
+                    <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-chart-line'}`}></i> {aiGenerating ? '...' : 'Fill Competitive Data'}
+                  </button>
                 </div>
                 <div className="form-row three-col">
                   <div className="form-group"><label>Category</label><select value={category} onChange={(e) => setCategory(e.target.value)}><option value="">Select Category...</option>{categoryOptions.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}{category && !categoryOptions.some((c)=>c.name===category) ? <option value={category}>{category}</option> : null}</select></div>
