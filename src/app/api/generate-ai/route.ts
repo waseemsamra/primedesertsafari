@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are an expert travel copywriter for UAE desert safari and tour experiences. Write compelling, SEO-friendly content. Return ONLY the requested content, no extra explanation.' },
+          { role: 'system', content: 'You are an expert travel market researcher and SEO copywriter for UAE desert safari and tour experiences. Research competitive market data from your knowledge (pricing, inclusions, positioning vs competitors in Dubai/Abu Dhabi/Ras Al Khaimah) and write compelling, SEO-optimized content. Return ONLY the requested content, no extra explanation.' },
           { role: 'user', content: prompt },
         ],
         max_tokens: 800,

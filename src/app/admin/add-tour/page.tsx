@@ -374,6 +374,99 @@ function AddTourInner() {
     }
   };
 
+  const fillCompetitiveData = async () => {
+    if (!title.trim()) {
+      setMsg('Error: Please enter a tour title first.');
+      return;
+    }
+    setAiGenerating(true);
+    setMsg('Researching competitive data for this tour...');
+    try {
+      const productName = title.trim();
+      const loc = location || 'Dubai, UAE';
+      const cat = category || 'Tour';
+      const dur = duration || 'Full day';
+      const prc = price || 'TBA';
+
+      const basePrompt = `Competitive market research for: "${productName}" in ${loc}. Category: ${cat}. Duration: ${dur}. Current listed price: AED ${prc}.`;
+
+      // Short description with competitive angle
+      const shortDesc = await callAI(`${basePrompt}\n\nWrite a short description (2-3 sentences) that positions this tour competitively against other ${cat.toLowerCase()} operators in ${loc}. Mention unique advantages. Return only the text.`);
+      setShortDescription(shortDesc);
+
+      // Full description with market positioning
+      const fullDesc = await callAI(`${basePrompt}\n\nWrite a comprehensive description (600-800 words) for "${productName}" that covers: market positioning vs competitors in ${loc}, detailed itinerary, inclusions vs competitors, pricing justification vs market rates, best time to book, target audience, and strong competitive advantages. Use H2 headings and bullet points. Optimize for Google Ads landing page quality. Return only the text.`);
+      setFullDescription(fullDesc);
+
+      // Competitive features
+      const featuresText = await callAI(`${basePrompt}\n\nList 8 competitive features/inclusions that would make this "${productName}" tour stand out against other operators in ${loc}. Include premium differentiators. Comma-separated list only.`);
+      const featureItems = featuresText.split(',').map((f) => f.trim()).filter(Boolean).map((label) => ({ icon: 'fas fa-check-circle', label }));
+      setFeatures(featureItems);
+
+      // Competitive itinerary
+      const itineraryText = await callAI(`${basePrompt}\n\nCreate a competitive day itinerary with 5-7 steps for "${productName}". Each step should include a premium element that competitors may not offer. Format: Title | Description | Duration. One per line.`);
+      const itinerarySteps = itineraryText.split('\n').map((line) => {
+        const parts = line.split('|').map((p) => p.trim()).filter(Boolean);
+        return parts.length >= 2 ? { title: parts[0], description: parts[1] || '', duration: parts[2] || '' } : null;
+      }).filter(Boolean) as ItineraryStep[];
+      if (itinerarySteps.length) setItinerary(itinerarySteps);
+
+      // Highlights
+      const highlightsText = await callAI(`${basePrompt}\n\nList 8 competitive highlights/selling points for this "${productName}" tour vs market alternatives in ${loc}. Comma-separated list only.`);
+      setHighlightsText(highlightsText.split(',').map((h) => h.trim()).filter(Boolean).join('\n'));
+
+      // Know before with competitive prep
+      const knowBeforeText = await callAI(`${basePrompt}\n\nWrite "Know Before You Go" (4-6 bullet points) for "${productName}" including what competitors don't tell customers, hidden costs to watch for, and preparation tips. Return only bullet points.`);
+      setKnowBefore(knowBeforeText);
+
+      // Age policy
+      const agePolicyText = await callAI(`${basePrompt}\n\nWrite a competitive age policy (2-3 sentences) for "${productName}". Return only the text.`);
+      setAgePolicy(agePolicyText);
+
+      // Cancellation policy
+      const cancelPolicyText = await callAI(`${basePrompt}\n\nWrite a competitive cancellation policy (2-3 sentences) for "${productName}" that beats market standard. Return only the text.`);
+      setCancellationPolicy(cancelPolicyText);
+
+      // Vehicle options (competitive tiers)
+      const vehicleText = await callAI(`${basePrompt}\n\nSuggest 4 vehicle/transport options for "${productName}" ranging from budget to premium, competitive with market in ${loc}. Comma-separated list only.`);
+      setVehicleOptions(vehicleText.split(',').map((v) => v.trim()).filter(Boolean));
+
+      // Package options (competitive pricing tiers)
+      const packageText = await callAI(`${basePrompt}\n\nSuggest 3 competitive package tiers (Budget, Standard, Premium/VIP) for "${productName}" with market-justified positioning in ${loc}. Comma-separated list only.`);
+      setPackageOptions(packageText.split(',').map((p) => p.trim()).filter(Boolean));
+
+      // === COMPETITIVE SEO ===
+      const focusKw = await callAI(`Primary exact-match keyword for "${productName}" in ${loc} for Google Ads Search campaigns. Format: "[Product] [Location]". Return only the keyword.`);
+      setSeoFocusKeyword(focusKw);
+
+      const seoTitle = await callAI(`SEO meta title (under 60 chars) for "${productName}" in ${loc} that beats competitors in search results. Include product name, location, and "Best Price" or "Book Now". Return only the title.`);
+      setSeoMetaTitle(seoTitle);
+
+      const seoDesc = await callAI(`SEO meta description (under 160 chars) for "${productName}" in ${loc}. Include price positioning vs competitors, free cancellation, and "Book Now" CTA. Google Ads quality score optimized. Return only the description.`);
+      setSeoMetaDescription(seoDesc);
+
+      const seoKw = await callAI(`15-18 Google Ads keywords for "${productName}" in ${loc}. Include exact match, phrase match, broad match, competitor comparison keywords (vs, alternative, better than), and booking intent (cheap, deals, price, online booking). Comma-separated only.`);
+      setSeoMetaKeywords(seoKw);
+
+      const ogTitle = await callAI(`Open Graph title (under 70 chars) for "${productName}" tour ad creative.`);
+      setSeoOgTitle(ogTitle);
+
+      const ogDesc = await callAI(`Open Graph description (under 160 chars) for "${productName}" in ${loc} - social ad copy. Include CTA.`);
+      setSeoOgDescription(ogDesc);
+
+      if (!seoCanonicalUrl) {
+        const tourSlug = slug || slugify(title);
+        setSeoCanonicalUrl(`https://primedesertsafari.com/tour/${tourSlug}`);
+      }
+
+      setMsg('Competitive data filled! All fields populated with market-researched content. Review and Publish.');
+    } catch (err: any) {
+      setMsg(`Error: ${err?.message || 'Competitive data fill failed'}`);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -502,6 +595,9 @@ function AddTourInner() {
                     <input type="text" value={slug} onChange={(e) => { const v = e.target.value; setSlug(v); setSlugTouched(!!v.trim()); }} placeholder="overnight-desert-safari-ras-al-khaimah" style={{ flex: 1 }} /><span className="help-text">Auto-generates from title.</span>
                     <button type="button" className="btn-sm btn-add" onClick={generateAllContent} disabled={aiGenerating} style={{ marginLeft: 6 }}>
                       <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-magic'}`}></i> {aiGenerating ? 'AI...' : 'AI Fill All'}
+                    </button>
+                    <button type="button" className="btn-sm btn-add" onClick={fillCompetitiveData} disabled={aiGenerating} style={{ marginLeft: 6 }}>
+                      <i className={`fas ${aiGenerating ? 'fa-circle-notch fa-spin' : 'fa-chart-line'}`}></i> {aiGenerating ? '...' : 'Fill Competitive Data'}
                     </button>
                   </div>
                 </div>
