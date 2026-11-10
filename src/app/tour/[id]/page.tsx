@@ -102,6 +102,7 @@ export default function TourDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [open, setOpen] = useState<Record<string, boolean>>({ itinerary: true });
+  const [mainImg, setMainImg] = useState<string>('');
 
   useEffect(() => {
     if (!idOrSlug) return;
@@ -128,6 +129,9 @@ export default function TourDetailPage() {
         return;
       }
       setTour(data);
+      const g = asArray<string>(data.gallery).filter(Boolean);
+      const arr = g.length > 0 ? g : (data.image_url ? [data.image_url] : [placeholder]);
+      setMainImg(arr[0] || '');
       const { data: rel } = await supabase
         .from('tours')
         .select('id,title,slug,category,price,duration,rating,image_url,discount,badge')
@@ -180,12 +184,18 @@ export default function TourDetailPage() {
 
         <div className="gallery-wrapper">
           <div className="gallery-main">
-            <img src={imgs[0]} alt={tour.title || 'Tour'} />
+            <img src={mainImg || imgs[0]} alt={tour.title || 'Tour'} />
+          </div>
+          <div className="gallery-thumbs">
+            {imgs.map((src, i) => (
+              <div className={`gallery-thumb-item ${i === 0 ? 'active' : ''}`} key={i} onClick={() => setMainImg(src)}>
+                <img src={src} alt={`${tour.title || 'Tour'} ${i + 1}`} />
+              </div>
+            ))}
           </div>
           {imgs.slice(1, 5).map((src, i) => (
             <div className="gallery-side-item" key={i}>
               <img src={src} alt={`${tour.title || 'Tour'} ${i + 2}`} />
-              {i === 3 && <button className="btn-see-all" type="button"><i className="fas fa-images"></i> See all photos</button>}
             </div>
           ))}
         </div>
@@ -304,45 +314,50 @@ export default function TourDetailPage() {
                   {(packages.length ? packages : ['Standard Package', 'VIP Package']).map((v, i) => <option key={`pkg-${i}`} value={v}>{v}</option>)}
                 </select>
               </div>
-              <Link href="/contact" className="btn-add-cart">Add to Cart</Link>
+              <Link href={`/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || '')}&price=${tour.price ?? ''}`} className="btn-add-cart">Book Now</Link>
               {tour.status && tour.status !== 'Active' && <p style={{ marginTop: 10, fontSize: 12, color: '#ef4444' }}>Currently unavailable</p>}
             </div>
           </div>
         </div>
 
-        {related.length > 0 && (
-          <>
-            <div className="section-header">
-              <h2>Other <span>Experiences</span> you might like</h2>
-              <div className="arrows">
-                <div className="arrow-btn"><i className="fas fa-chevron-left"></i></div>
-                <div className="arrow-btn"><i className="fas fa-chevron-right"></i></div>
-              </div>
+      {related.length > 0 && (
+        <>
+          <div className="section-header">
+            <h2>Other <span>Experiences</span> you might like</h2>
+            <div className="arrows">
+              <div className="arrow-btn"><i className="fas fa-chevron-left"></i></div>
+              <div className="arrow-btn"><i className="fas fa-chevron-right"></i></div>
             </div>
-            <div className="card-grid">
-              {related.map((r) => (
-                <Link href={tourHref(r)} className="card" key={r.id}>
-                  <div className="card-img">
-                    <img src={r.image_url || placeholder} alt={r.title || 'Tour'} />
-                    {(r.discount || r.badge) && <span className={`badge-tag ${r.discount ? 'red' : ''}`}>{r.discount || r.badge}</span>}
+          </div>
+          <div className="card-grid">
+            {related.map((r) => (
+              <Link href={tourHref(r)} className="card" key={r.id}>
+                <div className="card-img">
+                  <img src={r.image_url || placeholder} alt={r.title || 'Tour'} />
+                  {(r.discount || r.badge) && <span className={`badge-tag ${r.discount ? 'red' : ''}`}>{r.discount || r.badge}</span>}
+                </div>
+                <div className="card-body">
+                  <div className="card-category">{r.category || 'Tour'}</div>
+                  <div className="card-title">{r.title || 'Tour'}</div>
+                  <div className="features-tags">
+                    {r.duration && <span className="feature-tag"><i className="fas fa-clock"></i> {r.duration}</span>}
+                    {r.rating && <span className="feature-tag"><i className="fas fa-star" style={{ color: 'gold' }}></i> {r.rating}</span>}
                   </div>
-                  <div className="card-body">
-                    <div className="card-category">{r.category || 'Tour'}</div>
-                    <div className="card-title">{r.title || 'Tour'}</div>
-                    <div className="features-tags">
-                      {r.duration && <span className="feature-tag"><i className="fas fa-clock"></i> {r.duration}</span>}
-                      {r.rating && <span className="feature-tag"><i className="fas fa-star" style={{ color: 'gold' }}></i> {r.rating}</span>}
+                    <div className="price-row">
+                      <div className="price"><span>From</span> {r.price != null ? `AED ${Number(r.price).toLocaleString()}` : '—'}</div>
+                      <button className="btn-book" onClick={(e) => { e.stopPropagation(); window.location.href = tourHref(r); }}>Book now</button>
                     </div>
-                      <div className="price-row">
-                        <div className="price"><span>From</span> {r.price != null ? `AED ${Number(r.price).toLocaleString()}` : '—'}</div>
-                        <button className="btn-book" onClick={(e) => { e.stopPropagation(); window.location.href = tourHref(r); }}>Book now</button>
-                      </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+      </div>
+
+      {/* Mobile bottom Book Now bar */}
+      <div className="mobile-book-bar">
+        <Link href={`/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || '')}&price=${tour.price ?? ''}`} className="mobile-book-btn">Book Now</Link>
       </div>
     </div>
   );
