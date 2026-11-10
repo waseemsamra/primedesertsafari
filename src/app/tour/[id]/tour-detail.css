@@ -103,6 +103,10 @@
   .tour-detail-page .highlight-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
   .tour-detail-page .card-grid { grid-template-columns: 1fr; }
 
+  /* Features: horizontal scroll on mobile */
+  .tour-detail-page .features-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; }
+  .tour-detail-page .feature-item { flex: 0 0 auto; min-width: 120px; }
+
   /* Gallery: main image on top, horizontal thumbnails below */
   .tour-detail-page .gallery-wrapper { display: block; gap: 12px; height: auto; margin-bottom: 16px; }
   .tour-detail-page .gallery-main { width: 100%; height: 320px; border-radius: 15px; overflow: hidden; }
