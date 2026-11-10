@@ -727,7 +727,7 @@ function AddTourInner() {
                       <input type="text" value={vehicleInput} onChange={(e) => setVehicleInput(e.target.value)} placeholder="Add option" />
                       <button type="button" className="btn-sm btn-add" onClick={() => { if (vehicleInput.trim()) { setVehicleOptions([...vehicleOptions, vehicleInput.trim()]); setVehicleInput(''); } }}>+</button>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{vehicleOptions.map((v) => (<span key={v} className="feature-item">{v} <i className="fas fa-times" onClick={() => setVehicleOptions(vehicleOptions.filter((x) => x !== v))}></i></span>))}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{vehicleOptions.map((v, i) => (<span key={`vehicle-${i}`} className="feature-item">{v} <i className="fas fa-times" onClick={() => setVehicleOptions(vehicleOptions.filter((x) => x !== v))}></i></span>))}</div>
                   </div>
                   <div className="form-group">
                     <label>Package Options</label>
@@ -735,7 +735,7 @@ function AddTourInner() {
                       <input type="text" value={packageInput} onChange={(e) => setPackageInput(e.target.value)} placeholder="Add option" />
                       <button type="button" className="btn-sm btn-add" onClick={() => { if (packageInput.trim()) { setPackageOptions([...packageOptions, packageInput.trim()]); setPackageInput(''); } }}>+</button>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{packageOptions.map((v) => (<span key={v} className="feature-item">{v} <i className="fas fa-times" onClick={() => setPackageOptions(packageOptions.filter((x) => x !== v))}></i></span>))}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{packageOptions.map((v, i) => (<span key={`package-${i}`} className="feature-item">{v} <i className="fas fa-times" onClick={() => setPackageOptions(packageOptions.filter((x) => x !== v))}></i></span>))}</div>
                   </div>
                   <div className="form-group"><label>Video URL (optional)</label><input type="text" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/..." /></div>
                 </div>

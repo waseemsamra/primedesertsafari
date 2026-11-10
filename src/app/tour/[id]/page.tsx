@@ -50,6 +50,50 @@ type Tour = {
 const asArray = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const placeholder = 'https://images.unsplash.com/photo-1547234935-80c7145ec969?q=80&w=1200&auto=format&fit=crop';
 
+function MdLine({ children }: { children: React.ReactNode }) {
+  return <span style={{ display: 'inline' }}>{children}</span>;
+}
+
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  return parts.map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : <MdLine key={i}>{p}</MdLine>));
+}
+
+function MarkdownRenderer({ text }: { text?: string | null }) {
+  if (!text) return null;
+  const blocks = text.split(/\n\n+/);
+  return (
+    <div className="markdown-content">
+      {blocks.map((block, bi) => {
+        const trimmed = block.trim();
+        if (!trimmed) return null;
+        const h2 = trimmed.match(/^##\s+(.+)$/);
+        const h3 = trimmed.match(/^###\s+(.+)$/);
+        if (h2) return <h2 key={bi} style={{ fontSize: 1.25, fontWeight: 700, margin: '16px 0 8px', color: '#111827' }}>{renderInline(h2[1])}</h2>;
+        if (h3) return <h3 key={bi} style={{ fontSize: 1.1, fontWeight: 700, margin: '14px 0 6px', color: '#111827' }}>{renderInline(h3[1])}</h3>;
+        const lines = trimmed.split('\n');
+        const bulletLines = lines.filter((l) => /^[-•]\s/.test(l.trim()));
+        const numLines = lines.filter((l) => /^\d+\.\s/.test(l.trim()));
+        if (bulletLines.length === lines.length && bulletLines.length > 0) {
+          return (
+            <ul key={bi} style={{ margin: '8px 0 12px 20px', paddingLeft: 0, listStyle: 'disc' }}>
+              {bulletLines.map((l, li) => <li key={li} style={{ marginBottom: 4 }}>{renderInline(l.replace(/^[-•]\s/, ''))}</li>)}
+            </ul>
+          );
+        }
+        if (numLines.length === lines.length && numLines.length > 0) {
+          return (
+            <ol key={bi} style={{ margin: '8px 0 12px 20px', paddingLeft: 0, listStyle: 'decimal' }}>
+              {numLines.map((l, li) => <li key={li} style={{ marginBottom: 4 }}>{renderInline(l.replace(/^\d+\.\s/, ''))}</li>)}
+            </ol>
+          );
+        }
+        return <p key={bi} style={{ marginBottom: 10, lineHeight: 1.6, color: '#374151' }}>{renderInline(trimmed)}</p>;
+      })}
+    </div>
+  );
+}
+
 export default function TourDetailPage() {
   const params = useParams<{ id: string }>();
   const idOrSlug = params?.id;
@@ -171,7 +215,8 @@ export default function TourDetailPage() {
 
             <div className="section-block">
               <h3>About</h3>
-              <p className="about-text">{tour.short_description || tour.full_description || 'Details coming soon.'}</p>
+              <MarkdownRenderer text={tour.short_description || tour.full_description || null} />
+              {!tour.short_description && !tour.full_description && <span className="about-text">Details coming soon.</span>}
               <div className="meta-info">
                 {tour.duration && <span><i className="fas fa-clock"></i> Duration: {tour.duration}</span>}
                 {tour.language && <span><i className="fas fa-globe"></i> Language: {tour.language}</span>}
@@ -182,7 +227,7 @@ export default function TourDetailPage() {
             {tour.full_description && (
               <div className={`accordion ${open.full ? 'active' : ''}`} onClick={() => toggle('full')}>
                 <div className="accordion-header">Full description <i className="fas fa-chevron-down"></i></div>
-                <div className="accordion-content"><p>{tour.full_description}</p></div>
+                <div className="accordion-content"><MarkdownRenderer text={tour.full_description} /></div>
               </div>
             )}
 
@@ -194,7 +239,7 @@ export default function TourDetailPage() {
                     {itinerary.map((s, i) => (
                       <div className="itinerary-item" key={i}>
                         <div className="itinerary-title">{i + 1}. {s.title || 'Step'}</div>
-                        {s.description && <div className="itinerary-desc">{s.description}</div>}
+                        {s.description && <div className="itinerary-desc"><MarkdownRenderer text={s.description} /></div>}
                         {s.duration && <div className="itinerary-time"><i className="fas fa-clock"></i> {s.duration}</div>}
                       </div>
                     ))}
@@ -212,19 +257,19 @@ export default function TourDetailPage() {
             {tour.know_before_you_go && (
               <div className={`accordion ${open.know ? 'active' : ''}`} onClick={() => toggle('know')}>
                 <div className="accordion-header">Know before you go <i className="fas fa-chevron-down"></i></div>
-                <div className="accordion-content"><p>{tour.know_before_you_go}</p></div>
+                <div className="accordion-content"><MarkdownRenderer text={tour.know_before_you_go} /></div>
               </div>
             )}
             {tour.age_policy && (
               <div className={`accordion ${open.age ? 'active' : ''}`} onClick={() => toggle('age')}>
                 <div className="accordion-header">Age policy <i className="fas fa-chevron-down"></i></div>
-                <div className="accordion-content"><p>{tour.age_policy}</p></div>
+                <div className="accordion-content"><MarkdownRenderer text={tour.age_policy} /></div>
               </div>
             )}
             {tour.cancellation_policy && (
               <div className={`accordion ${open.cancel ? 'active' : ''}`} onClick={() => toggle('cancel')}>
                 <div className="accordion-header">Cancellation policy <i className="fas fa-chevron-down"></i></div>
-                <div className="accordion-content"><p>{tour.cancellation_policy}</p></div>
+                <div className="accordion-content"><MarkdownRenderer text={tour.cancellation_policy} /></div>
               </div>
             )}
 
@@ -250,13 +295,13 @@ export default function TourDetailPage() {
               <div className="form-group">
                 <select className="dropdown-box" defaultValue="">
                   <option value="">Choose Your Vehicle</option>
-                  {(vehicles.length ? vehicles : ['Shared 4x4', 'Private 4x4']).map((v) => <option key={v} value={v}>{v}</option>)}
+                  {(vehicles.length ? vehicles : ['Shared 4x4', 'Private 4x4']).map((v, i) => <option key={`veh-${i}`} value={v}>{v}</option>)}
                 </select>
               </div>
               <div className="form-group">
                 <select className="dropdown-box" defaultValue="">
                   <option value="">Choose Your Package</option>
-                  {(packages.length ? packages : ['Standard Package', 'VIP Package']).map((v) => <option key={v} value={v}>{v}</option>)}
+                  {(packages.length ? packages : ['Standard Package', 'VIP Package']).map((v, i) => <option key={`pkg-${i}`} value={v}>{v}</option>)}
                 </select>
               </div>
               <Link href="/contact" className="btn-add-cart">Add to Cart</Link>

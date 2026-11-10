@@ -18,6 +18,7 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<LocationItem[]>([]);
   const [tours, setTours] = useState<Tour[]>([]);
+  const [tourSearch, setTourSearch] = useState('');
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -174,6 +175,17 @@ export default function AdminDashboard() {
     return m;
   }, [tours]);
 
+  const filteredTours = useMemo(() => {
+    const q = tourSearch.trim().toLowerCase();
+    if (!q) return tours;
+    return tours.filter((t) => {
+      const name = (t.title || t.name || '').toLowerCase();
+      const cat = (t.category || '').toLowerCase();
+      const loc = (t.location || '').toLowerCase();
+      return name.includes(q) || cat.includes(q) || loc.includes(q);
+    });
+  }, [tours, tourSearch]);
+
   return (
     <>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -260,19 +272,21 @@ export default function AdminDashboard() {
           <div className={`page-container ${activeTab === 'tours' ? 'active' : ''}`}>
             <div className="header-actions">
               <p style={{ color: 'var(--gray)', fontSize: '14px' }}>Manage all your safari and city tours here. {error ? <span style={{ color: 'var(--danger)' }}>({error})</span> : null}</p>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <input type="text" placeholder="Search tours by name, category, location..." value={tourSearch} onChange={(e) => setTourSearch(e.target.value)} style={{ padding: '8px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, minWidth: 260 }} />
                 <button className="btn btn-secondary" onClick={load} type="button"><i className="fas fa-rotate"></i> Refresh</button>
                 <Link href="/admin/add-tour" className="btn btn-primary"><i className="fas fa-plus"></i> Add New Tour</Link>
               </div>
             </div>
             <div className="table-container">
               <table>
-                <thead><tr><th>Tour Name</th><th>Category</th><th>Location</th><th>Price (AED)</th><th>Status</th><th>Trending</th><th>Actions</th></tr></thead>
+                <thead><tr><th style={{ width: 50 }}>#</th><th>Tour Name</th><th>Category</th><th>Location</th><th>Price (AED)</th><th>Status</th><th>Trending</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {loading ? <tr><td colSpan={7} style={{ padding: 24, color: 'var(--gray)' }}>Loading tours...</td></tr>
-                  : tours.length === 0 ? <tr><td colSpan={7} style={{ padding: 24, color: 'var(--gray)' }}>No tours found. <Link href="/admin/add-tour" style={{ color: 'var(--primary)' }}>Add one</Link>.</td></tr>
-                  : tours.map(tour => (
+                  {loading ? <tr><td colSpan={8} style={{ padding: 24, color: 'var(--gray)' }}>Loading tours...</td></tr>
+                  : filteredTours.length === 0 ? <tr><td colSpan={8} style={{ padding: 24, color: 'var(--gray)' }}>No tours found matching your search. <Link href="/admin/add-tour" style={{ color: 'var(--primary)' }}>Add one</Link>.</td></tr>
+                  : filteredTours.map((tour, idx) => (
                     <tr key={tour.id}>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--gray)' }}>{idx + 1}</td>
                       <td><strong><Link href={`/tour/${tour.slug || tour.id}`} style={{ color: 'inherit' }}>{tourName(tour)}</Link></strong></td>
                       <td>{tour.category || '—'}</td>
                       <td>{tour.location || '—'}</td>
