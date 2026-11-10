@@ -121,6 +121,12 @@
   .tour-detail-page .right-col { display: none; }
   .tour-detail-page .content-grid { grid-template-columns: 1fr; gap: 20px; padding-bottom: 80px; max-width: 100%; overflow-x: hidden; }
 
+  /* Prevent accordion/text overflow on mobile */
+  .tour-detail-page .accordion-content { word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+  .tour-detail-page .accordion-content p, .tour-detail-page .accordion-content ul, .tour-detail-page .accordion-content ol, .tour-detail-page .accordion-content li { max-width: 100%; word-wrap: break-word; overflow-wrap: break-word; }
+  .tour-detail-page .markdown-content p, .tour-detail-page .markdown-content ul, .tour-detail-page .markdown-content ol, .tour-detail-page .markdown-content li { max-width: 100%; word-wrap: break-word; overflow-wrap: break-word; }
+  .tour-detail-page .itinerary-desc { word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+
   /* Mobile bottom Book Now bar - sticky */
   .tour-detail-page .mobile-book-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border-color); padding: 10px 16px; z-index: 1000; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .tour-detail-page .mobile-book-price { font-size: 17px; font-weight: 800; color: var(--text-dark); white-space: nowrap; }
