@@ -8,7 +8,7 @@
   --green: #10b981;
   --blue: #3b82f6;
 }
-.tour-detail-page { color: var(--text-dark); background: #fff; line-height: 1.5; font-family: 'Poppins', sans-serif; }
+.tour-detail-page { color: var(--text-dark); background: #fff; line-height: 1.5; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
 .tour-detail-page * { box-sizing: border-box; }
 .tour-detail-page a { text-decoration: none; color: inherit; }
 .tour-detail-page ul { list-style: none; margin: 0; padding: 0; }
@@ -104,8 +104,8 @@
   .tour-detail-page .card-grid { grid-template-columns: 1fr; }
 
   /* Features: horizontal scroll on mobile */
-  .tour-detail-page .features-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; }
-  .tour-detail-page .feature-item { flex: 0 0 auto; min-width: 120px; }
+  .tour-detail-page .features-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 12px; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; max-width: 100%; }
+  .tour-detail-page .feature-item { flex: 0 0 auto; min-width: 140px; max-width: 100%; }
 
   /* Gallery: main image on top, horizontal thumbnails below */
   .tour-detail-page .gallery-wrapper { display: block; gap: 12px; height: auto; margin-bottom: 16px; }
@@ -119,7 +119,7 @@
 
   /* Hide right-col booking sidebar on mobile; bottom bar takes over */
   .tour-detail-page .right-col { display: none; }
-  .tour-detail-page .content-grid { grid-template-columns: 1fr; gap: 20px; padding-bottom: 80px; }
+  .tour-detail-page .content-grid { grid-template-columns: 1fr; gap: 20px; padding-bottom: 80px; max-width: 100%; overflow-x: hidden; }
 
   /* Mobile bottom Book Now bar - sticky */
   .tour-detail-page .mobile-book-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border-color); padding: 12px 16px; z-index: 1000; box-shadow: 0 -4px 12px rgba(0,0,0,0.1); }
