@@ -357,6 +357,7 @@ export default function TourDetailPage() {
 
       {/* Mobile bottom Book Now bar */}
       <div className="mobile-book-bar">
+        <div className="mobile-book-price">{priceText}</div>
         <Link href={`/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || '')}&price=${tour.price ?? ''}`} className="mobile-book-btn">Book Now</Link>
       </div>
     </div>
