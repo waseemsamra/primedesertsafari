@@ -29,13 +29,35 @@ const processedMain = main
   .replace(/<!-- Your Prime Desert Safari Moments \(Gallery\) -->[\s\S]*$/, "");
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Prime Desert Safari",
+    description: "Desert safari Dubai, Abu Dhabi, and Ras Al Khaimah tour operator. Book morning and evening desert safari, dune buggy, quad bike, and private desert safari camps with hotel pickup, BBQ dinner, and live entertainment.",
+    url: "https://primedesertsafari.com",
+    logo: "https://primedesertsafari.com/Prime-Desert-Logo.png",
+    telephone: "+971 50 133 2442",
+    email: "bookings@primedesertsafari.com",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Dubai",
+      addressCountry: "AE"
+    },
+    sameAs: ["https://primedesertsafari.com"]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <style dangerouslySetInnerHTML={{ __html: inlineStyle }} />
       <Hero />
-      <section className="container hide-mobile" style={{ marginTop: 18 }}>
-        <p style={{ margin: 0, color: "#475569", lineHeight: 1.6 }}>
-          Prime Desert Safari helps you book desert safari Dubai, desert safari Abu Dhabi, and desert safari Ras Al Khaimah experiences. Compare morning and evening desert safari tours, dune buggy rides, quad bike adventures, and private desert safari camps with clear inclusions, pricing, and pickup details.
+      <section className="container" style={{ marginTop: 18 }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 8px', color: '#1e293b' }}>Desert Safari Dubai & UAE Tours | Prime Desert Safari</h1>
+        <p style={{ margin: 0, color: '#475569', lineHeight: 1.6, fontSize: '15px' }}>
+          Book the best desert safari Dubai, desert safari Abu Dhabi, and desert safari Ras Al Khaimah tours with Prime Desert Safari. Compare morning and evening desert safari, dune buggy rides, quad bike adventures, and private desert safari camps with clear inclusions, pricing, and hotel pickup. Free cancellation, best price guarantee, and instant confirmation.
         </p>
       </section>
       <MomentsGallery title="Top Desert Safari Experiences in UAE" />

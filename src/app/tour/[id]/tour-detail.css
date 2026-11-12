@@ -56,7 +56,8 @@
 .tour-detail-page .itinerary-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
 .tour-detail-page .itinerary-desc { font-size: 13px; color: var(--text-light); margin-bottom: 8px; }
 .tour-detail-page .itinerary-time { font-size: 11px; color: var(--green); display: inline-flex; align-items: center; gap: 5px; background: #ecfdf5; padding: 2px 8px; border-radius: 10px; }
-.tour-detail-page .booking-sidebar { background: #fff; border: 1px solid var(--border-color); border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: sticky; top: 20px; height: fit-content; }
+.tour-detail-page .mobile-book-bar { display: none; }
+.tour-detail-page .booking-sidebar { background: #fff; border: 1px solid var(--border-color); border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: sticky; top: 20px; align-self: start; }
 .tour-detail-page .booking-sidebar h3 { font-size: 18px; margin-bottom: 20px; }
 .tour-detail-page .form-group { margin-bottom: 15px; }
 .tour-detail-page .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
