@@ -61,7 +61,9 @@ export default function SignedImage({ src, alt, ...rest }: Props) {
         if (!cancelled) setUrl(u);
       })
       .catch(() => {
-        if (!cancelled) setUrl("");
+        // Signing failed (e.g. image hosted on a different ImageKit account):
+        // fall back to the raw URL so the image still renders.
+        if (!cancelled) setUrl(src);
       });
     return () => {
       cancelled = true;
