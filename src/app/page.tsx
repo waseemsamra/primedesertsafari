@@ -26,7 +26,8 @@ const processedMain = main
   .replace(/<!-- Desert Safaris Section -->[\s\S]*?<!-- Circular Experiences Section -->/, "<!-- Circular Experiences Section -->")
   .replace(/<!-- Circular Experiences Section -->[\s\S]*?<!-- Split Banners Section -->/, "<!-- Split Banners Section -->")
   .replace(/<!-- Top City Tours Section -->[\s\S]*?<!-- Desert Safari Experiences Banner -->/, "<!-- Desert Safari Experiences Banner -->")
-  .replace(/<!-- Your Prime Desert Safari Moments \(Gallery\) -->[\s\S]*$/, "");
+  .replace(/<!-- Your Prime Desert Safari Moments \(Gallery\) -->[\s\S]*$/, "")
+  .replace(/https:\/\/ik\.imagekit\.io\/piwakgkp8\/[^"'\s)]+/g, (m) => `/api/img?src=${encodeURIComponent(m)}`);
 
 export default function Home() {
   const jsonLd = {

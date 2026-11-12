@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import SignedImage from './SignedImage';
 
 type Item = { id: number; image_url: string; alt_text?: string | null };
 
@@ -58,7 +59,7 @@ export default function PrimeMomentsGallery() {
       </div>
       <div className="image-gallery prime-moments-gallery">
         {items.map((it, i) => (
-          <img key={it.id} src={it.image_url} alt={it.alt_text || `Moment ${i + 1}`} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }} />
+          <SignedImage key={it.id} src={it.image_url} alt={it.alt_text || `Moment ${i + 1}`} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }} />
         ))}
       </div>
       {note ? <p style={{ color: '#b45309', fontSize: 12, marginTop: 8 }}>Moments CMS: {note}</p> : null}

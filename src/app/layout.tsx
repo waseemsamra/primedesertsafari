@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ImageProtection from "@/components/ImageProtection";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://primedesertsafari.com";
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
       <body>
+        <ImageProtection />
         <Suspense fallback={null}>
           <Header />
         </Suspense>

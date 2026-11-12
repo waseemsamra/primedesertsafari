@@ -1,9 +1,9 @@
 "use client";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import TourCard from "@/components/TourCard";
+import SignedImage from "@/components/SignedImage";
 
 type Tour = any;
 
@@ -76,7 +76,7 @@ function CategoryInner() {
   return (
     <main>
       <section className="container" style={{ position: "relative", overflow: "hidden", borderRadius: 20, marginTop: 20, background: "#fff", height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Image src={hero} alt={title} width={1300} height={420} sizes="(max-width: 768px) 100vw, 1300px" style={{ objectFit: "contain", width: "100%", height: "auto", objectPosition: "center", display: "block" }} />
+        <SignedImage src={hero} alt={title} width={1300} height={420} sizes="(max-width: 768px) 100vw, 1300px" style={{ objectFit: "contain", width: "100%", height: "auto", objectPosition: "center", display: "block" }} />
       </section>
       <div className="container" style={{ padding: "40px 20px" }}>
         {loading ? (

@@ -682,6 +682,18 @@ div.arrow-btn {
   .view-all-container { margin-top: 14px; display: flex !important; justify-content: center; padding: 0 16px; }
 }
 
+/* Image protection - prevent selection, dragging, and saving */
+img, picture, video, svg {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
 /* Hide horizontal scrollbar line (keep scroll) */
 .tours-slider-track::-webkit-scrollbar,
 .circular-categories::-webkit-scrollbar,

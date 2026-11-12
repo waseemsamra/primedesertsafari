@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import SignedImage from "./SignedImage";
 
 type Slide = { img: string; title: string; desc: string };
 
@@ -46,7 +46,7 @@ export default function Hero() {
   return (
     <div className="container">
       <section className="hero" style={{ position: "relative", minHeight: 400 }}>
-        <Image src={s.img} alt={s.title || "Hero slide"} fill priority sizes="100vw" className="object-cover" />
+        <SignedImage src={s.img} alt={s.title || "Hero slide"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div className="hero-content">
           {s.title ? <h1>{s.title}</h1> : null}
           {s.desc ? <p>{s.desc}</p> : null}

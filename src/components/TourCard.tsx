@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SignedImage from "./SignedImage";
 
 export type TourCardTour = {
   id: number | string;
@@ -25,7 +26,7 @@ export default function TourCard({ tour }: { tour: TourCardTour }) {
   return (
     <Link href={href} className="tour-card-link" style={{ textDecoration: "none", color: "inherit" }}>
       <div className="tour-card">
-        <img src={img} alt={tour.title || "Tour"} className="tour-card-img" />
+        <SignedImage src={img} alt={tour.title || "Tour"} className="tour-card-img" />
         <div className="tour-card-body">
           <div className="tour-card-category">{tour.category || "Tour"}</div>
           <div className="tour-card-title" title={tour.title || undefined}>{tour.title}</div>

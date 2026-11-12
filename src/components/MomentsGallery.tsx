@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
+import SignedImage from "./SignedImage";
 
 type Item = { title: string; image: string; href: string };
 
@@ -21,7 +21,7 @@ export default function MomentsGallery({ title = "Top Desert Safari Experiences 
       <div className="image-gallery moments-cards">
         {defaults.map((it) => (
           <Link key={it.title} href={it.href} className="moment-card" style={{ textDecoration: "none", color: "inherit" }}>
-            <Image src={it.image} alt={it.title} width={400} height={300} className="w-full h-auto object-cover" />
+            <SignedImage src={it.image} alt={it.title} width={400} height={300} className="w-full h-auto object-cover" />
             <p className="moment-card-title">{it.title}</p>
           </Link>
         ))}

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import SignedImage from "./SignedImage";
 
 type Category = { id: number; name: string; image_url?: string | null };
 
@@ -44,7 +45,7 @@ export default function OurExperiences() {
           const href = `/category/${encodeURIComponent(slugify(name) || name)}`;
           return (
             <Link key={it.id ?? name} href={href} className="circle-cat" style={{ textDecoration: "none", color: "inherit" }}>
-              {it.image_url ? <img src={it.image_url} alt={name} /> : <div style={{ width: "100%", aspectRatio: "1/1", borderRadius: "50%", background: "#e2e8f0", marginBottom: 15 }} />}
+              {it.image_url ? <SignedImage src={it.image_url} alt={name} /> : <div style={{ width: "100%", aspectRatio: "1/1", borderRadius: "50%", background: "#e2e8f0", marginBottom: 15 }} />}
               <p>{name}</p>
             </Link>
           );

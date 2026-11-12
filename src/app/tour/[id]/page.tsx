@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import SignedImage from '@/components/SignedImage';
 import './tour-detail.css';
 
 type ItineraryStep = { title?: string; description?: string; duration?: string };
@@ -184,18 +185,18 @@ export default function TourDetailPage() {
 
         <div className="gallery-wrapper">
           <div className="gallery-main">
-            <img src={mainImg || imgs[0]} alt={tour.title || 'Tour'} />
+            <SignedImage src={mainImg || imgs[0]} alt={tour.title || 'Tour'} />
           </div>
           <div className="gallery-thumbs">
             {imgs.map((src, i) => (
               <div className={`gallery-thumb-item ${i === 0 ? 'active' : ''}`} key={i} onClick={() => setMainImg(src)}>
-                <img src={src} alt={`${tour.title || 'Tour'} ${i + 1}`} />
+                <SignedImage src={src} alt={`${tour.title || 'Tour'} ${i + 1}`} />
               </div>
             ))}
           </div>
           {imgs.slice(1, 5).map((src, i) => (
             <div className="gallery-side-item" key={i}>
-              <img src={src} alt={`${tour.title || 'Tour'} ${i + 2}`} />
+              <SignedImage src={src} alt={`${tour.title || 'Tour'} ${i + 2}`} />
             </div>
           ))}
         </div>
@@ -332,8 +333,8 @@ export default function TourDetailPage() {
           <div className="card-grid">
             {related.map((r) => (
               <Link href={tourHref(r)} className="card" key={r.id}>
-                <div className="card-img">
-                  <img src={r.image_url || placeholder} alt={r.title || 'Tour'} />
+                  <div className="card-img">
+                    <SignedImage src={r.image_url || placeholder} alt={r.title || 'Tour'} />
                   {(r.discount || r.badge) && <span className={`badge-tag ${r.discount ? 'red' : ''}`}>{r.discount || r.badge}</span>}
                 </div>
                 <div className="card-body">
