@@ -58,10 +58,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const s = decodeURIComponent(slug).toLowerCase();
-  const cat = CATS[s];
+  const rawSlug = decodeURIComponent(slug);
+  const s = rawSlug.toLowerCase();
+  const canonicalSlug = s === "desert-safaris" ? "desert-adventures" : s;
+  const cat = CATS[canonicalSlug];
   const name = cat?.name || titleize(s);
-  const canonical = `/category/${slug}`;
+  const canonical = `/category/${canonicalSlug}`;
   const title = pageTitle(name);
   const description =
     cat?.description ||
@@ -93,10 +95,12 @@ export default async function CategoryLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const s = decodeURIComponent(slug).toLowerCase();
-  const cat = CATS[s];
+  const rawSlug = decodeURIComponent(slug);
+  const s = rawSlug.toLowerCase();
+  const canonicalSlug = s === "desert-safaris" ? "desert-adventures" : s;
+  const cat = CATS[canonicalSlug];
   const name = cat?.name || titleize(s);
-  const url = `${SITE}/category/${slug}`;
+  const url = `${SITE}/category/${canonicalSlug}`;
   const description =
     cat?.description ||
     `Browse ${name.toLowerCase()} tours and experiences in Dubai, Abu Dhabi, and Ras Al Khaimah.`;

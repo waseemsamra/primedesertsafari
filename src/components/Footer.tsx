@@ -35,7 +35,7 @@ export default function Footer() {
             <h4>Explore</h4>
             <ul>
               <li><Link href="/tours">All Tours</Link></li>
-              <li><Link href="/category/desert-safaris">Desert Safaris</Link></li>
+              <li><Link href="/category/desert-adventures">Desert Safaris</Link></li>
               <li><Link href="/category/city-tours">City Tours</Link></li>
               <li><Link href="/about">About Us</Link></li>
             </ul>

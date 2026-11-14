@@ -3,7 +3,7 @@ import SignedImageServer from "@/components/SignedImageServer";
 import { getAllTours } from "@/lib/tours-server";
 
 const heroImages: Record<string, string> = {
-  "desert-adventures": "https://ik.imagekit.io/piwakgkp8/UAE_Desert_Adventures_Await_Om684eaXx.png",
+  "desert-adventures": "https://ik.imagekit.io/piwakgkp8/UAE_Desert_Adventures_Await_Om684eaXx.png?updatedAt=1794172190357",
   attractions: "https://ik.imagekit.io/piwakgkp8/Dubai_at_Golden_Hour__Iconic_Attractions_6kvriTNqY.png",
   "city-tours": "https://ik.imagekit.io/piwakgkp8/Dubai_City_Tour__Discover_Iconic_Dubai_J6W-SdcNW.png",
   "cruise-and-boat-tours": "https://ik.imagekit.io/piwakgkp8/Dubai_Sunset_Cruise_Adventures_zN0Ffc5l7.png",
@@ -35,7 +35,7 @@ export default async function CategoryPage({
   const { slug } = await params;
   const sp = await searchParams;
   const rawSlug = decodeURIComponent(slug);
-  const s = rawSlug.toLowerCase();
+  const s = rawSlug.toLowerCase() === "desert-safaris" ? "desert-adventures" : rawSlug.toLowerCase();
   const locationFilter = sp.location;
 
   const title =
@@ -61,6 +61,7 @@ export default async function CategoryPage({
   }
 
   const hero = heroImages[s] || defaultHero;
+  const heroFit = s === "desert-adventures" ? "cover" : "contain";
 
   return (
     <main>
@@ -84,7 +85,7 @@ export default async function CategoryPage({
           width={1300}
           height={420}
           sizes="(max-width: 768px) 100vw, 1300px"
-          style={{ objectFit: "contain", width: "100%", height: "auto", objectPosition: "center", display: "block" }}
+          style={{ objectFit: heroFit, width: "100%", height: heroFit === "cover" ? "100%" : "auto", objectPosition: "center", display: "block" }}
         />
       </section>
       <div className="container" style={{ padding: "40px 20px" }}>
