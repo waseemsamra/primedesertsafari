@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signImageUrl, isImagekitUrl } from "@/lib/imagekit-sign";
+import { buildTransform } from "@/lib/imagekit-transform";
 import { isSearchBot, BOT_EXPIRY_SECONDS, USER_EXPIRY_SECONDS } from "@/lib/bot-detect";
 
 const ALLOWED_HOSTS = new Set([
@@ -32,7 +33,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Invalid image" }, { status: 400 });
   }
 
-  const signed = signImageUrl(src, bot ? BOT_EXPIRY_SECONDS : USER_EXPIRY_SECONDS);
+  const wParam = req.nextUrl.searchParams.get("w");
+  let transform: string | undefined;
+  if (wParam) {
+    const w = Math.max(50, Math.min(2560, parseInt(wParam, 10) || 0));
+    if (w) transform = buildTransform(w);
+  }
+
+  const signed = signImageUrl(src, bot ? BOT_EXPIRY_SECONDS : USER_EXPIRY_SECONDS, transform);
   return NextResponse.json(signed, {
     headers: { "Cache-Control": "no-store" },
   });

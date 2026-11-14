@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     type: "website",
     url: "/trending-attractions",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trending Attractions in Dubai & UAE",
+    description: "Discover the most popular and trending tours and attractions in Dubai, Abu Dhabi, and Ras Al Khaimah.",
+  },
 };
 
 export default function TrendingAttractionsLayout({ children }: { children: ReactNode }) {

@@ -4,6 +4,17 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Prime Desert Safari collects, uses, and protects personal information when you browse, inquire, or book tours.",
   alternates: { canonical: "/privacy-policy" },
+  openGraph: {
+    title: "Privacy Policy",
+    description: "How Prime Desert Safari collects, uses, and protects personal information when you browse, inquire, or book tours.",
+    url: "/privacy-policy",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy",
+    description: "How Prime Desert Safari collects, uses, and protects personal information when you browse, inquire, or book tours.",
+  },
 };
 
 export default function PrivacyPolicyPage() {

@@ -46,7 +46,7 @@ export default function Hero() {
   return (
     <div className="container">
       <section className="hero" style={{ position: "relative", minHeight: 400 }}>
-        <SignedImage src={s.img} alt={s.title || "Hero slide"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        <SignedImage src={s.img} alt={s.title || "Hero slide"} width={960} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div className="hero-content">
           {s.title ? <h1>{s.title}</h1> : null}
           {s.desc ? <p>{s.desc}</p> : null}

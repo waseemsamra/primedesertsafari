@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "About Prime Desert Safari — clear pricing, genuinely free cancellation up to 24 hours before your visit, and a real support team for Dubai desert safari, dhow cruise, water sport, and city attraction bookings.",
   alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About Us",
+    description: "About Prime Desert Safari — clear pricing, genuinely free cancellation up to 24 hours before your visit, and a real support team for Dubai desert safari, dhow cruise, water sport, and city attraction bookings.",
+    url: "/about",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us",
+    description: "About Prime Desert Safari — clear pricing, genuinely free cancellation up to 24 hours before your visit, and a real support team for Dubai desert safari, dhow cruise, water sport, and city attraction bookings.",
+  },
 };
 
 export default function AboutPage() {

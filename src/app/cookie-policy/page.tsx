@@ -4,6 +4,17 @@ export const metadata: Metadata = {
   title: "Cookie Policy",
   description: "How Prime Desert Safari uses cookies and similar technologies for site functionality, analytics, and advertising measurement.",
   alternates: { canonical: "/cookie-policy" },
+  openGraph: {
+    title: "Cookie Policy",
+    description: "How Prime Desert Safari uses cookies and similar technologies for site functionality, analytics, and advertising measurement.",
+    url: "/cookie-policy",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cookie Policy",
+    description: "How Prime Desert Safari uses cookies and similar technologies for site functionality, analytics, and advertising measurement.",
+  },
 };
 
 export default function CookiePolicyPage() {

@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     type: "website",
     url: "/category",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tour Categories — Desert Safari, City Tours, Cruises & More",
+    description: "Browse tours by category: desert adventures, city tours, cruise and boat tours, waterparks, attractions, and transport.",
+  },
 };
 
 export default function CategoryLayout({ children }: { children: ReactNode }) {

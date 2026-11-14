@@ -4,6 +4,17 @@ export const metadata: Metadata = {
   title: "Contact",
   description: "Contact Prime Desert Safari for tour inquiries, bookings, changes, cancellations, and business details.",
   alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact",
+    description: "Contact Prime Desert Safari for tour inquiries, bookings, changes, cancellations, and business details.",
+    url: "/contact",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact",
+    description: "Contact Prime Desert Safari for tour inquiries, bookings, changes, cancellations, and business details.",
+  },
 };
 
 const PHONE = "+971 50 133 2442";

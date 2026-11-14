@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     type: "website",
     url: "/tours",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tours & Activities in Dubai, Abu Dhabi & UAE",
+    description: "Browse all desert safari, city tour, dhow cruise, water sports, theme park, and yacht tours. Filter by category, location, and price.",
+  },
 };
 
 export default function ToursLayout({ children }: { children: ReactNode }) {

@@ -29,7 +29,7 @@ export default function ExperiencesManagementPage() {
   const [msg, setMsg] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState<Item | null>(null);
-  const [form, setForm] = useState({ title: '', image_url: '', link_url: '/', sort_order: '0', status: 'Active' });
+  const [form, setForm] = useState({ title: '', image_url: '', link_url: '/tours', sort_order: '0', status: 'Active' });
 
   const load = async () => {
     setLoading(true); setMsg('');
@@ -40,7 +40,7 @@ export default function ExperiencesManagementPage() {
   };
   useEffect(() => { load(); }, []);
 
-  const reset = () => { setEditing(null); setForm({ title: '', image_url: '', link_url: '/', sort_order: String(items.length), status: 'Active' }); if (fileRef.current) fileRef.current.value = ''; };
+  const reset = () => { setEditing(null); setForm({ title: '', image_url: '', link_url: '/tours', sort_order: String(items.length), status: 'Active' }); if (fileRef.current) fileRef.current.value = ''; };
 
   const onUpload = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -69,7 +69,7 @@ export default function ExperiencesManagementPage() {
     reset();
   };
 
-  const edit = (it: Item) => { setEditing(it); setForm({ title: it.title || '', image_url: it.image_url || '', link_url: it.link_url || '/', sort_order: String(it.sort_order ?? 0), status: it.status || 'Active' }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const edit = (it: Item) => { setEditing(it); setForm({ title: it.title || '', image_url: it.image_url || '', link_url: it.link_url || '/tours', sort_order: String(it.sort_order ?? 0), status: it.status || 'Active' }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const remove = async (id: number) => { if (!confirm('Delete this experience item?')) return; const { error } = await supabase.from('experience_items').delete().eq('id', id); if (error) { alert(error.message); return; } setItems((s) => s.filter((x) => x.id !== id)); };
 
   return (
@@ -80,10 +80,10 @@ export default function ExperiencesManagementPage() {
       <div className="admin-wrapper">
         <Sidebar />
         <main className="main-content">
-          <Topbar title="CMS - Our Experiences" />
+          <Topbar title="CMS - Top Desert Safari Experiences" />
           <div className="page-container">
             <div className="form-section">
-              <h3 className="section-title"><i className="fas fa-circle-notch"></i> {editing ? 'Edit Experience' : 'Add Experience'}</h3>
+              <h3 className="section-title"><i className="fas fa-circle-notch"></i> {editing ? 'Edit Experience Card' : 'Add Experience Card'}</h3>
               <form onSubmit={save}>
                 <div className="form-row">
                   <div className="form-group"><label>Title</label><input type="text" value={form.title} onChange={(e)=>setForm({...form,title:e.target.value})} placeholder="e.g. Desert Safaris" required /></div>
@@ -93,25 +93,25 @@ export default function ExperiencesManagementPage() {
                   <div className="form-group"><label>Image Upload (ImageKit)</label><input ref={fileRef} type="file" accept="image/*" onChange={(e)=>onUpload(e.target.files)} /><span className="help-text">{uploading ? 'Uploading to ImageKit...' : 'Upload from local drive, or paste image URL below.'}</span></div>
                   <div className="form-group"><label>Image URL</label><input type="text" value={form.image_url} onChange={(e)=>setForm({...form,image_url:e.target.value})} placeholder="https://..." required /></div>
                 </div>
-                {form.image_url ? <div style={{ marginBottom: 16 }}><img src={form.image_url} alt="Preview" style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: '50%', border: '1px solid var(--border)' }} /></div> : null}
+                {form.image_url ? <div style={{ marginBottom: 16 }}><img src={form.image_url} alt="Preview" style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }} /></div> : null}
                 <div className="form-row">
                   <div className="form-group"><label>Sort Order</label><input type="number" value={form.sort_order} onChange={(e)=>setForm({...form,sort_order:e.target.value})} /></div>
                   <div className="form-group"><label>Status</label><select value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
                   {editing && <button type="button" className="btn btn-secondary" onClick={reset}>Cancel</button>}
-                  <button type="submit" className="btn btn-primary" disabled={!!savingId || uploading}><i className="fas fa-save"></i> {savingId ? 'Saving...' : editing ? 'Update' : 'Add Experience'}</button>
+                  <button type="submit" className="btn btn-primary" disabled={!!savingId || uploading}><i className="fas fa-save"></i> {savingId ? 'Saving...' : editing ? 'Update' : 'Add Experience Card'}</button>
                 </div>
               </form>
               {msg && <p style={{ marginTop: 10, color: msg.startsWith('Error') ? 'var(--danger)' : 'var(--success)' }}>{msg}</p>}
             </div>
             <div className="form-section">
-              <h3 className="section-title"><i className="fas fa-layer-group"></i> Our Experiences Items</h3>
+              <h3 className="section-title"><i className="fas fa-layer-group"></i> Top Desert Safari Experience Cards</h3>
               {loading ? <p style={{ color: 'var(--gray)' }}>Loading...</p> : items.length === 0 ? <p style={{ color: 'var(--gray)' }}>No items yet.</p> : (
                 <div className="cms-hero-grid">
                   {items.map((it) => (
                     <div className="cms-slide-card" key={it.id}>
-                      <div className="cms-slide-preview" style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden' }}>{it.image_url ? <img src={it.image_url} alt={it.title} /> : <i className="fas fa-image"></i>}</div>
+                      <div className="cms-slide-preview" style={{ width: 120, height: 120, borderRadius: '8px', overflow: 'hidden' }}>{it.image_url ? <img src={it.image_url} alt={it.title} /> : <i className="fas fa-image"></i>}</div>
                       <div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}><strong>{it.title}</strong><span className={`badge ${(it.status||'Active')==='Active'?'badge-active':'badge-inactive'}`}>{it.status||'Active'}</span><span style={{ color: 'var(--gray)', fontSize: 12 }}>Order: {it.sort_order ?? 0}</span></div>
                         <div style={{ color: 'var(--gray)', fontSize: 12, wordBreak: 'break-all' }}>{it.link_url || '—'}</div>

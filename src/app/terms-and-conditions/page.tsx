@@ -4,6 +4,17 @@ export const metadata: Metadata = {
   title: "Terms and Conditions",
   description: "Booking terms, pricing, guest responsibilities, and service conditions for Prime Desert Safari tours and experiences.",
   alternates: { canonical: "/terms-and-conditions" },
+  openGraph: {
+    title: "Terms and Conditions",
+    description: "Booking terms, pricing, guest responsibilities, and service conditions for Prime Desert Safari tours and experiences.",
+    url: "/terms-and-conditions",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms and Conditions",
+    description: "Booking terms, pricing, guest responsibilities, and service conditions for Prime Desert Safari tours and experiences.",
+  },
 };
 
 export default function TermsPage() {

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import TourCard from "@/components/TourCard";
@@ -7,6 +7,9 @@ import TourCard from "@/components/TourCard";
 export default function CityTours() {
   const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const scroll = (d: number) => ref.current?.scrollBy({ left: d, behavior: "smooth" });
 
   useEffect(() => {
     let cancelled = false;
@@ -51,15 +54,20 @@ export default function CityTours() {
     <section className="container" style={{ marginTop: 40 }}>
       <div className="section-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 12 }}>
         <h2 className="slider-section-title">Top City Tours</h2>
-        <Link href="/category/city-tours" className="slider-view-all section-view-all-top">View All City Tours</Link>
+        <div className="slider-section-actions section-head-actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Link href="/category/city-tours" className="slider-view-all section-view-all-top">View All City Tours</Link>
+          <button type="button" className="arrow-btn section-arrow" onClick={() => scroll(-320)} aria-label="Scroll left"><i className="fas fa-chevron-left"></i></button>
+          <button type="button" className="arrow-btn section-arrow" onClick={() => scroll(320)} aria-label="Scroll right"><i className="fas fa-chevron-right"></i></button>
+        </div>
       </div>
-      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 0", scrollBehavior: "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}>
+      <div ref={ref} style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 0", scrollBehavior: "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}>
         {tours.map((t) => (
           <div key={t.id} style={{ flex: "0 0 25%", minWidth: 260 }}>
             <TourCard tour={t} />
           </div>
         ))}
       </div>
+      <div className="section-view-all-bottom"><Link href="/category/city-tours" className="btn-view-all">View all</Link></div>
     </section>
   );
 }

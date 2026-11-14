@@ -4,6 +4,17 @@ export const metadata: Metadata = {
   title: "Cancellation and Refund Policy",
   description: "Cancellation, rescheduling, no-show, and refund information for Prime Desert Safari tour bookings.",
   alternates: { canonical: "/cancellation-refund" },
+  openGraph: {
+    title: "Cancellation and Refund Policy",
+    description: "Cancellation, rescheduling, no-show, and refund information for Prime Desert Safari tour bookings.",
+    url: "/cancellation-refund",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cancellation and Refund Policy",
+    description: "Cancellation, rescheduling, no-show, and refund information for Prime Desert Safari tour bookings.",
+  },
 };
 
 export default function CancellationRefundPage() {

@@ -9,7 +9,8 @@ export function isImagekitUrl(url: string): boolean {
 
 export function signImageUrl(
   url: string,
-  expiresInSeconds = 300
+  expiresInSeconds = 300,
+  transform?: string
 ): { url: string; expiresAt: number } {
   if (!ENDPOINT || !PRIVATE_KEY || !isImagekitUrl(url)) {
     return { url, expiresAt: 0 };
@@ -21,5 +22,6 @@ export function signImageUrl(
     .createHmac("sha1", PRIVATE_KEY)
     .update(path + expiresAt)
     .digest("hex");
-  return { url: `${base}?ik-t=${expiresAt}&ik-s=${signature}`, expiresAt };
+  const tr = transform ? `tr=${transform}&` : "";
+  return { url: `${base}?${tr}ik-t=${expiresAt}&ik-s=${signature}`, expiresAt };
 }

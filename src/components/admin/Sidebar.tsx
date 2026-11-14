@@ -50,7 +50,7 @@ export default function Sidebar() {
               </li>
               <li>
                 <Link href="/admin/cms/experiences" className={isActive('/admin/cms/experiences') ? 'active' : ''}>
-                  <i className="fas fa-circle-notch"></i> Our Experiences
+                  <i className="fas fa-circle-notch"></i> Top Desert Safari Experiences
                 </Link>
               </li>
               <li>
