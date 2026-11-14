@@ -56,9 +56,13 @@ function MarkdownRenderer({ text }: { text?: string | null }) {
 export default function TourDetailClient({
   tour,
   related,
+  heroSrc,
+  heroExpiresAt = 0,
 }: {
   tour: TourRecord;
   related: TourRecord[];
+  heroSrc?: string;
+  heroExpiresAt?: number;
 }) {
   const gallery = asArray<string>(tour.gallery).filter(Boolean);
   const imgs = gallery.length ? gallery : tour.image_url ? [tour.image_url] : [placeholder];
@@ -92,7 +96,13 @@ export default function TourDetailClient({
 
         <div className="gallery-wrapper">
           <div className="gallery-main">
-            <SignedImage src={mainImg || imgs[0]} alt={tour.title || "Tour"} width={800} />
+            <SignedImage
+              src={mainImg || imgs[0]}
+              alt={tour.title || "Tour"}
+              width={800}
+              initialSrc={mainImg === imgs[0] ? heroSrc : undefined}
+              initialExpiresAt={mainImg === imgs[0] ? heroExpiresAt : 0}
+            />
           </div>
           <div className="gallery-thumbs">
             {imgs.map((src, i) => (
