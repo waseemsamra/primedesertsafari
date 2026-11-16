@@ -97,6 +97,11 @@ function BookingInner() {
     const { error } = await supabase.from('bookings').insert(payload);
     setSaving(false);
     if (error) { setMsg('Could not submit booking: ' + error.message); return; }
+    fetch('/api/booking-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'admin', booking: payload }),
+    }).catch(() => {});
     setDone({ reference });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

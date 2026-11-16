@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
 import AdminStyles from '../AdminStyles';
 import Sidebar from '@/components/admin/Sidebar';
 import Topbar from '@/components/admin/Topbar';
@@ -28,6 +28,13 @@ type Booking = {
 };
 
 const STATUSES = ['Pending', 'Confirmed', 'Cancelled'] as const;
+
+const statusStyle = (s: string): CSSProperties => {
+  const base: CSSProperties = { padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit' };
+  if (s === 'Confirmed') return { ...base, background: '#d1fae5', color: '#059669' };
+  if (s === 'Cancelled') return { ...base, background: '#fee2e2', color: '#dc2626' };
+  return { ...base, background: '#fef3c7', color: '#b45309' };
+};
 
 const emptyForm = {
   full_name: '',
@@ -116,8 +123,19 @@ export default function BookingsPage() {
       .single();
     setSaving(false);
     if (err) { setMsg(`Error: ${err.message}`); return; }
-    if (data) setBookings((s) => s.map((x) => (x.id === editItem.id ? (data as Booking) : x)));
+    if (data) {
+      setBookings((s) => s.map((x) => (x.id === editItem.id ? (data as Booking) : x)));
+      if (data.status !== editItem.status) notifyCustomer(data as Booking);
+    }
     setEditItem(null);
+  };
+
+  const notifyCustomer = (b: Booking) => {
+    fetch('/api/booking-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'status', booking: b }),
+    }).catch(() => {});
   };
 
   const quickStatus = async (b: Booking, status: string) => {
@@ -128,7 +146,10 @@ export default function BookingsPage() {
       .select('*')
       .single();
     if (err) { alert(err.message); return; }
-    if (data) setBookings((s) => s.map((x) => (x.id === b.id ? (data as Booking) : x)));
+    if (data) {
+      setBookings((s) => s.map((x) => (x.id === b.id ? (data as Booking) : x)));
+      notifyCustomer(data as Booking);
+    }
   };
 
   const remove = async (b: Booking) => {
@@ -185,7 +206,15 @@ export default function BookingsPage() {
                       <td>{fmtDate(b.booking_date)}</td>
                       <td>{b.travelers || '—'}</td>
                       <td>{money(b)}</td>
-                      <td><span className={`badge badge-${(b.status || 'Pending').toLowerCase()}`}>{b.status || 'Pending'}</span></td>
+                      <td>
+                        <select
+                          value={b.status || 'Pending'}
+                          onChange={(e) => quickStatus(b, e.target.value)}
+                          style={statusStyle(b.status || 'Pending')}
+                        >
+                          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </td>
                       <td className="action-btns">
                         <button className="icon-btn btn-view" title="View" type="button" onClick={() => setViewItem(b)}><i className="fas fa-eye"></i></button>
                         <button className="icon-btn btn-edit" title="Edit" type="button" onClick={() => openEdit(b)}><i className="fas fa-edit"></i></button>
