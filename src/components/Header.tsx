@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     setOpen(false);
@@ -15,6 +17,23 @@ export default function Header() {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  useEffect(() => {
+    if (q.trim().length < 3) return;
+    const t = setTimeout(() => search(q), 500);
+    return () => clearTimeout(t);
+  }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const search = (value: string) => {
+    const query = value.trim();
+    if (query.length < 3) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    search(q);
+  };
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -36,10 +55,18 @@ export default function Header() {
             <img src="/Prime-Desert-Logo.png" alt="Prime Desert Safari" className="brand-logo" />
           </Link>
 
-          <div className="search-bar">
-            <input type="text" placeholder="Find my feeling" />
-            <i className="fas fa-search"></i>
-          </div>
+          <form className="search-bar" onSubmit={onSubmit} role="search">
+            <input
+              type="text"
+              placeholder="Find my feeling"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              minLength={3}
+            />
+            <button type="submit" aria-label="Search" style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <i className="fas fa-search"></i>
+            </button>
+          </form>
 
           <div className="nav-actions">
             <Link href="/admin/login" aria-label="Sign in" className="nav-signin">
