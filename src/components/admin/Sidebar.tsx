@@ -15,6 +15,7 @@ export default function Sidebar() {
   const navItems = [
     { href: '/admin', label: 'Tours', icon: 'fas fa-map-marked-alt' },
     { href: '/admin/categories', label: 'Categories', icon: 'fas fa-tags' },
+    { href: '/admin/bookings', label: 'Bookings', icon: 'fas fa-calendar-check' },
     { href: '/admin/users', label: 'Users', icon: 'fas fa-users' },
     { href: '/admin/settings', label: 'Settings', icon: 'fas fa-cog' },
     { href: '/admin/profile', label: 'Profile', icon: 'fas fa-user-circle' },

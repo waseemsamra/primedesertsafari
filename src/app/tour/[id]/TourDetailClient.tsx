@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode, type CSSProperties } from "react";
 import Link from "next/link";
 import SignedImage from "@/components/SignedImage";
 import type { TourRecord, TourFeature, TourItinerary } from "@/lib/tours-server";
@@ -9,45 +9,120 @@ import "./tour-detail.css";
 const asArray = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const placeholder = "https://images.unsplash.com/photo-1547234935-80c7145ec969?q=80&w=1200&auto=format&fit=crop";
 
-function MdLine({ children }: { children: React.ReactNode }) {
+type ListItem = { text: string; children: ListNode | null };
+type ListNode = { ordered: boolean; items: ListItem[] };
+type Block =
+  | { kind: "heading"; level: number; text: string }
+  | { kind: "list"; node: ListNode }
+  | { kind: "para"; text: string };
+
+const HEADING_RE = /^(#{1,6})\s+(.*)$/;
+const LIST_RE = /^(\s*)([-*•]|\d+[.)])\s+(.*)$/;
+
+const HEADING_SIZES: Record<number, { fontSize: number; margin: string }> = {
+  1: { fontSize: 1.5, margin: "20px 0 10px" },
+  2: { fontSize: 1.25, margin: "16px 0 8px" },
+  3: { fontSize: 1.1, margin: "14px 0 6px" },
+  4: { fontSize: 1.02, margin: "12px 0 6px" },
+  5: { fontSize: 0.95, margin: "10px 0 4px" },
+  6: { fontSize: 0.9, margin: "10px 0 4px" },
+};
+
+function MdLine({ children }: { children: ReactNode }) {
   return <span style={{ display: "inline" }}>{children}</span>;
 }
 
-function renderInline(text: string): React.ReactNode {
+function renderInline(text: string): ReactNode {
   const parts = text.split(/\*\*(.+?)\*\*/g);
   return parts.map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : <MdLine key={i}>{p}</MdLine>));
 }
 
+function stripMd(s: string): string {
+  return s.replace(/\*\*/g, "").replace(/^\s*(?:\d+[.)]|[-*•])\s+/, "").trim();
+}
+
+function parseListAt(lines: string[], pos: { i: number }): ListNode {
+  const baseIndent = (lines[pos.i].match(LIST_RE) as RegExpMatchArray)[1].length;
+  const parseLevel = (indent: number): ListNode => {
+    const items: ListItem[] = [];
+    const ordered = /\d/.test((lines[pos.i].match(LIST_RE) as RegExpMatchArray)[2]);
+    while (pos.i < lines.length) {
+      if (!lines[pos.i].trim()) {
+        let j = pos.i;
+        while (j < lines.length && !lines[j].trim()) j++;
+        const nm = j < lines.length ? lines[j].match(LIST_RE) : null;
+        if (nm && nm[1].length >= indent) { pos.i = j; continue; }
+        break;
+      }
+      const m = lines[pos.i].match(LIST_RE);
+      if (!m) break;
+      const ind = m[1].length;
+      if (ind !== indent) break;
+      const item: ListItem = { text: m[3].trim(), children: null };
+      pos.i++;
+      if (pos.i < lines.length) {
+        const nm = lines[pos.i].match(LIST_RE);
+        if (nm && nm[1].length > ind) item.children = parseLevel(nm[1].length);
+      }
+      items.push(item);
+    }
+    return { ordered, items };
+  };
+  return parseLevel(baseIndent);
+}
+
+function parseBlocks(text: string): Block[] {
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const blocks: Block[] = [];
+  const pos = { i: 0 };
+  while (pos.i < lines.length) {
+    const raw = lines[pos.i];
+    const trimmed = raw.trim();
+    if (!trimmed) { pos.i++; continue; }
+    const h = trimmed.match(HEADING_RE);
+    if (h) { blocks.push({ kind: "heading", level: h[1].length, text: h[2].trim() }); pos.i++; continue; }
+    if (LIST_RE.test(raw)) { blocks.push({ kind: "list", node: parseListAt(lines, pos) }); continue; }
+    const para = [trimmed];
+    pos.i++;
+    while (pos.i < lines.length) {
+      const l = lines[pos.i];
+      const t = l.trim();
+      if (!t || HEADING_RE.test(t) || LIST_RE.test(l)) break;
+      para.push(t);
+      pos.i++;
+    }
+    blocks.push({ kind: "para", text: para.join(" ") });
+  }
+  return blocks;
+}
+
+function renderList(node: ListNode, keyBase: string): ReactNode {
+  const Tag = node.ordered ? "ol" : "ul";
+  return (
+    <Tag style={{ margin: "8px 0 12px 22px", paddingLeft: 0, listStyle: node.ordered ? "decimal" : "disc" }}>
+      {node.items.map((it, i) => (
+        <li key={i} style={{ marginBottom: 4 }}>
+          {renderInline(it.text)}
+          {it.children ? renderList(it.children, `${keyBase}-${i}`) : null}
+        </li>
+      ))}
+    </Tag>
+  );
+}
+
 function MarkdownRenderer({ text }: { text?: string | null }) {
   if (!text) return null;
-  const blocks = text.split(/\n\n+/);
+  const blocks = parseBlocks(text);
   return (
     <div className="markdown-content">
-      {blocks.map((block, bi) => {
-        const trimmed = block.trim();
-        if (!trimmed) return null;
-        const h2 = trimmed.match(/^##\s+(.+)$/);
-        const h3 = trimmed.match(/^###\s+(.+)$/);
-        if (h2) return <h2 key={bi} style={{ fontSize: 1.25, fontWeight: 700, margin: "16px 0 8px", color: "#111827" }}>{renderInline(h2[1])}</h2>;
-        if (h3) return <h3 key={bi} style={{ fontSize: 1.1, fontWeight: 700, margin: "14px 0 6px", color: "#111827" }}>{renderInline(h3[1])}</h3>;
-        const lines = trimmed.split("\n");
-        const bulletLines = lines.filter((l) => /^[-•]\s/.test(l.trim()));
-        const numLines = lines.filter((l) => /^\d+\.\s/.test(l.trim()));
-        if (bulletLines.length === lines.length && bulletLines.length > 0) {
-          return (
-            <ul key={bi} style={{ margin: "8px 0 12px 20px", paddingLeft: 0, listStyle: "disc" }}>
-              {bulletLines.map((l, li) => <li key={li} style={{ marginBottom: 4 }}>{renderInline(l.replace(/^[-•]\s/, ""))}</li>)}
-            </ul>
-          );
+      {blocks.map((b, bi) => {
+        if (b.kind === "heading") {
+          const s = HEADING_SIZES[b.level] || HEADING_SIZES[3];
+          const Tag = `h${b.level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+          return <Tag key={bi} style={{ fontSize: s.fontSize, fontWeight: 700, margin: s.margin, color: "#111827" }}>{renderInline(b.text)}</Tag>;
         }
-        if (numLines.length === lines.length && numLines.length > 0) {
-          return (
-            <ol key={bi} style={{ margin: "8px 0 12px 20px", paddingLeft: 0, listStyle: "decimal" }}>
-              {numLines.map((l, li) => <li key={li} style={{ marginBottom: 4 }}>{renderInline(l.replace(/^\d+\.\s/, ""))}</li>)}
-            </ol>
-          );
-        }
-        return <p key={bi} style={{ marginBottom: 10, lineHeight: 1.6, color: "#374151" }}>{renderInline(trimmed)}</p>;
+        if (b.kind === "list") return <div key={bi}>{renderList(b.node, `b${bi}`)}</div>;
+        return <p key={bi} style={{ marginBottom: 10, lineHeight: 1.6, color: "#374151" }}>{renderInline(b.text)}</p>;
       })}
     </div>
   );
@@ -70,6 +145,11 @@ export default function TourDetailClient({
 
   const [open, setOpen] = useState<Record<string, boolean>>({ itinerary: true });
   const [mainImg, setMainImg] = useState<string>(imgs[0] || "");
+  const [bookingDate, setBookingDate] = useState("");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [selectedPkg, setSelectedPkg] = useState("");
+  const [selectedVeh, setSelectedVeh] = useState("");
 
   const features = asArray<TourFeature>(tour.features);
   const itinerary = asArray<TourItinerary>(tour.itinerary);
@@ -79,6 +159,9 @@ export default function TourDetailClient({
   const priceText = tour.price != null ? `From AED ${Number(tour.price).toLocaleString()}` : "Price on request";
   const tourHref = (t: TourRecord) => `/tour/${t.slug || t.id}`;
   const toggle = (k: string) => setOpen((o) => ({ ...o, [k]: !o[k] }));
+  const travelersLabel = `${adults} Adult${adults > 1 ? "s" : ""}${children > 0 ? `, ${children} Child${children > 1 ? "ren" : ""}` : ""}`;
+  const bookingHref = `/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || "")}&price=${tour.price ?? ""}&date=${encodeURIComponent(bookingDate)}&travelers=${encodeURIComponent(travelersLabel)}&package=${encodeURIComponent(selectedPkg)}&vehicle=${encodeURIComponent(selectedVeh)}`;
+  const stepBtn: CSSProperties = { width: 30, height: 30, borderRadius: 7, border: "1px solid var(--border-color)", background: "#f1f5f9", color: "var(--text-dark)", fontSize: 16, fontWeight: 700, cursor: "pointer", lineHeight: 1 };
 
   return (
     <div className="tour-detail-page">
@@ -166,9 +249,9 @@ export default function TourDetailClient({
                   <div className="itinerary-list">
                     {itinerary.map((s, i) => (
                       <div className="itinerary-item" key={i}>
-                        <div className="itinerary-title">{i + 1}. {s.title || "Step"}</div>
+                        <div className="itinerary-title">{i + 1}. {stripMd(s.title || "Step")}</div>
                         {s.description && <div className="itinerary-desc"><MarkdownRenderer text={s.description} /></div>}
-                        {s.duration && <div className="itinerary-time"><i className="fas fa-clock"></i> {s.duration}</div>}
+                        {s.duration && <div className="itinerary-time"><i className="fas fa-clock"></i> {s.duration.replace(/\*\*/g, "")}</div>}
                       </div>
                     ))}
                   </div>
@@ -179,7 +262,7 @@ export default function TourDetailClient({
             {highlights.length > 0 && (
               <div className={`accordion ${open.highlights ? "active" : ""}`} onClick={() => toggle("highlights")}>
                 <div className="accordion-header">Highlights <i className="fas fa-chevron-down"></i></div>
-                <div className="accordion-content"><ul>{highlights.map((h, i) => <li key={i} style={{ listStyle: "disc", marginLeft: 18, marginBottom: 6 }}>{h}</li>)}</ul></div>
+                <div className="accordion-content"><ul>{highlights.map((h, i) => <li key={i} style={{ listStyle: "disc", marginLeft: 18, marginBottom: 6 }}>{stripMd(h)}</li>)}</ul></div>
               </div>
             )}
             {tour.know_before_you_go && (
@@ -212,27 +295,40 @@ export default function TourDetailClient({
           <div className="right-col">
             <div className="booking-sidebar">
               <h3>Select Date and Travelers</h3>
-              <div className="form-group"><label>Date</label><input type="date" className="input-box" /></div>
+              <div className="form-group"><label>Date</label><input type="date" className="input-box" value={bookingDate} onChange={(e) => setBookingDate(e.target.value)} /></div>
               <div className="form-group">
-                <label>Number of guests</label>
-                <select className="dropdown-box"><option>1 Adult</option><option>2 Adults</option><option>2 Adults, 1 Child</option></select>
-                <div className="checkbox-group" style={{ marginTop: 10 }}>
-                  <input type="checkbox" id="childCheck" /> <label htmlFor="childCheck" style={{ marginBottom: 0, fontWeight: 400 }}>Children must be accompanied by an adult</label>
+                <label>Guests</label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--border-color)", borderRadius: 8, padding: "8px 12px", marginBottom: 8 }}>
+                  <span style={{ fontWeight: 500 }}>Adults</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <button type="button" onClick={() => setAdults((a) => Math.max(1, a - 1))} style={stepBtn}>−</button>
+                    <span style={{ minWidth: 20, textAlign: "center", fontWeight: 700 }}>{adults}</span>
+                    <button type="button" onClick={() => setAdults((a) => a + 1)} style={stepBtn}>+</button>
+                  </span>
                 </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--border-color)", borderRadius: 8, padding: "8px 12px" }}>
+                  <span style={{ fontWeight: 500 }}>Children</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <button type="button" onClick={() => setChildren((c) => Math.max(0, c - 1))} style={stepBtn}>−</button>
+                    <span style={{ minWidth: 20, textAlign: "center", fontWeight: 700 }}>{children}</span>
+                    <button type="button" onClick={() => setChildren((c) => c + 1)} style={stepBtn}>+</button>
+                  </span>
+                </div>
+                <p style={{ fontSize: 12, color: "var(--text-light)", marginTop: 8 }}>{travelersLabel}</p>
               </div>
               <div className="form-group">
-                <select className="dropdown-box" defaultValue="">
+                <select className="dropdown-box" value={selectedVeh} onChange={(e) => setSelectedVeh(e.target.value)}>
                   <option value="">Choose Your Vehicle</option>
                   {(vehicles.length ? vehicles : ["Shared 4x4", "Private 4x4"]).map((v, i) => <option key={`veh-${i}`} value={v}>{v}</option>)}
                 </select>
               </div>
               <div className="form-group">
-                <select className="dropdown-box" defaultValue="">
+                <select className="dropdown-box" value={selectedPkg} onChange={(e) => setSelectedPkg(e.target.value)}>
                   <option value="">Choose Your Package</option>
                   {(packages.length ? packages : ["Standard Package", "VIP Package"]).map((v, i) => <option key={`pkg-${i}`} value={v}>{v}</option>)}
                 </select>
               </div>
-              <Link href={`/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || "")}&price=${tour.price ?? ""}`} className="btn-add-cart">Book Now</Link>
+              <Link href={bookingHref} className="btn-add-cart">Book Now</Link>
               {tour.status && tour.status !== "Active" && <p style={{ marginTop: 10, fontSize: 12, color: "#ef4444" }}>Currently unavailable</p>}
             </div>
           </div>
@@ -276,7 +372,7 @@ export default function TourDetailClient({
       {/* Mobile bottom Book Now bar */}
       <div className="mobile-book-bar">
         <div className="mobile-book-price">{tour.price != null ? `AED ${Number(tour.price).toLocaleString()}` : "Price on request"}</div>
-        <Link href={`/booking?id=${tour.id}&title=${encodeURIComponent(tour.title || "")}&price=${tour.price ?? ""}`} className="mobile-book-btn">Book Now</Link>
+        <Link href={bookingHref} className="mobile-book-btn">Book Now</Link>
       </div>
     </div>
   );

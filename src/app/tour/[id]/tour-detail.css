@@ -33,7 +33,7 @@
 .tour-detail-page .highlight-left { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; color: var(--blue); }
 .tour-detail-page .highlight-left i { color: var(--blue); }
 .tour-detail-page .highlight-right { font-size: 12px; color: var(--text-light); }
-.tour-detail-page .highlight-right strong { color: var(--text-dark); font-size: 16px; display: block; text-align: right; }
+.tour-detail-page .highlight-right strong { color: var(--text-dark); font-size: 22px; display: block; text-align: right; }
 .tour-detail-page .content-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; padding-bottom: 40px; }
 .tour-detail-page .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
 .tour-detail-page .feature-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-dark); }
@@ -63,7 +63,8 @@
 .tour-detail-page .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
 .tour-detail-page .input-box, .tour-detail-page .dropdown-box { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
 .tour-detail-page .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-light); margin-bottom: 20px; }
-.tour-detail-page .btn-add-cart { width: 100%; padding: 15px; background: #e2e8f0; color: #94a3b8; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: not-allowed; margin-top: 10px; }
+.tour-detail-page .btn-add-cart { display: block; width: 100%; padding: 15px; background: var(--primary-yellow); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; text-align: center; text-decoration: none; box-sizing: border-box; }
+.tour-detail-page .btn-add-cart:hover { background: var(--primary-hover); }
 .tour-detail-page .video-section { margin: 50px 0; position: relative; border-radius: 15px; overflow: hidden; height: 400px; background: url('https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?q=80&w=1200&auto=format&fit=crop') center/cover; display: flex; justify-content: center; align-items: center; }
 .tour-detail-page .play-btn { width: 70px; height: 70px; background: #ff0000; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .tour-detail-page .watch-invi { position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }

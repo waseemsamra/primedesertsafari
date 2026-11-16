@@ -52,6 +52,13 @@ export default function AdminStyles() {
       .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
       .badge-active { background: #d1fae5; color: var(--success); }
       .badge-inactive { background: #fee2e2; color: var(--danger); }
+      .badge-pending { background: #fef3c7; color: #b45309; }
+      .badge-confirmed { background: #d1fae5; color: var(--success); }
+      .badge-cancelled { background: #fee2e2; color: var(--danger); }
+      .btn-delete { background: #fee2e2; color: var(--danger); }
+      .btn-delete:hover { background: #fecaca; }
+      .btn-view { background: #e0f2fe; color: #0284c7; }
+      .btn-view:hover { background: #bae6fd; }
       .action-btns { display: flex; gap: 8px; }
       .icon-btn { width: 30px; height: 30px; border-radius: 6px; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
       .btn-edit { background: #e0f2fe; color: #0284c7; }

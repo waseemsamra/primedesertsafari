@@ -268,3 +268,44 @@ DO $$ BEGIN
   END IF;
 END $$;
 NOTIFY pgrst, 'reload schema';
+
+-- Bookings: public booking form -> admin management
+CREATE TABLE IF NOT EXISTS bookings (
+  id bigint generated always as identity primary key,
+  reference text unique,
+  tour_id bigint references tours(id) on delete set null,
+  tour_title text,
+  tour_slug text,
+  package_option text,
+  vehicle_option text,
+  booking_date date,
+  travelers text,
+  full_name text not null,
+  email text,
+  phone text,
+  notes text,
+  amount numeric(10,2),
+  currency text default 'AED',
+  status text not null default 'Pending',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  constraint bookings_status_check check (status in ('Pending','Confirmed','Cancelled'))
+);
+CREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings (status);
+CREATE INDEX IF NOT EXISTS bookings_created_at_idx ON bookings (created_at desc);
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='bookings' AND policyname='bookings_select_all') THEN
+    CREATE POLICY "bookings_select_all" ON bookings FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='bookings' AND policyname='bookings_insert_all') THEN
+    CREATE POLICY "bookings_insert_all" ON bookings FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='bookings' AND policyname='bookings_update_all') THEN
+    CREATE POLICY "bookings_update_all" ON bookings FOR UPDATE USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='bookings' AND policyname='bookings_delete_all') THEN
+    CREATE POLICY "bookings_delete_all" ON bookings FOR DELETE USING (true);
+  END IF;
+END $$;
+NOTIFY pgrst, 'reload schema';

@@ -472,6 +472,8 @@ function AddTourInner() {
     setSaving(true);
     setMsg('');
     const cleanItinerary = itinerary.filter((s) => s.title.trim() || s.description.trim());
+    const effectiveVehicleOptions = vehicleInput.trim() ? [...vehicleOptions, vehicleInput.trim()] : vehicleOptions;
+    const effectivePackageOptions = packageInput.trim() ? [...packageOptions, packageInput.trim()] : packageOptions;
     let savedId = editId;
     let savedSlug = slugify(slug || title).trim() || null;
 
@@ -519,8 +521,8 @@ function AddTourInner() {
       know_before_you_go: knowBefore.trim() || null,
       age_policy: agePolicy.trim() || null,
       cancellation_policy: cancellationPolicy.trim() || null,
-      vehicle_options: vehicleOptions,
-      package_options: packageOptions,
+      vehicle_options: effectiveVehicleOptions,
+      package_options: effectivePackageOptions,
       video_url: videoUrl.trim() || null,
       meta_title: seoMetaTitle.trim() || null,
       meta_description: seoMetaDescription.trim() || null,
@@ -724,7 +726,7 @@ function AddTourInner() {
                   <div className="form-group">
                     <label>Vehicle Options</label>
                     <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                      <input type="text" value={vehicleInput} onChange={(e) => setVehicleInput(e.target.value)} placeholder="Add option" />
+                      <input type="text" value={vehicleInput} onChange={(e) => setVehicleInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (vehicleInput.trim()) { setVehicleOptions([...vehicleOptions, vehicleInput.trim()]); setVehicleInput(''); } } }} placeholder="Add option" />
                       <button type="button" className="btn-sm btn-add" onClick={() => { if (vehicleInput.trim()) { setVehicleOptions([...vehicleOptions, vehicleInput.trim()]); setVehicleInput(''); } }}>+</button>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{vehicleOptions.map((v, i) => (<span key={`vehicle-${i}`} className="feature-item">{v} <i className="fas fa-times" onClick={() => setVehicleOptions(vehicleOptions.filter((x) => x !== v))}></i></span>))}</div>
@@ -732,7 +734,7 @@ function AddTourInner() {
                   <div className="form-group">
                     <label>Package Options</label>
                     <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                      <input type="text" value={packageInput} onChange={(e) => setPackageInput(e.target.value)} placeholder="Add option" />
+                      <input type="text" value={packageInput} onChange={(e) => setPackageInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (packageInput.trim()) { setPackageOptions([...packageOptions, packageInput.trim()]); setPackageInput(''); } } }} placeholder="Add option" />
                       <button type="button" className="btn-sm btn-add" onClick={() => { if (packageInput.trim()) { setPackageOptions([...packageOptions, packageInput.trim()]); setPackageInput(''); } }}>+</button>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{packageOptions.map((v, i) => (<span key={`package-${i}`} className="feature-item">{v} <i className="fas fa-times" onClick={() => setPackageOptions(packageOptions.filter((x) => x !== v))}></i></span>))}</div>

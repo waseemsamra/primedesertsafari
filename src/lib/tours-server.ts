@@ -42,12 +42,12 @@ export type TourRecord = {
   focus_keyword?: string | null;
 };
 
-async function rest(pathAndQuery: string): Promise<unknown> {
+async function rest(pathAndQuery: string, fresh = false): Promise<unknown> {
   if (!SUPA_URL || !SUPA_KEY) return null;
   try {
     const res = await fetch(`${SUPA_URL}/rest/v1/${pathAndQuery}`, {
       headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
-      next: { revalidate: 300 },
+      ...(fresh ? { cache: "no-store" as const } : { next: { revalidate: 300 } }),
     });
     if (!res.ok) return null;
     return await res.json();
@@ -59,7 +59,7 @@ async function rest(pathAndQuery: string): Promise<unknown> {
 export async function getTour(idOrSlug: string): Promise<TourRecord | null> {
   const isNum = /^\d+$/.test(idOrSlug);
   const filter = isNum ? `id=eq.${idOrSlug}` : `slug=eq.${encodeURIComponent(idOrSlug)}`;
-  const rows = (await rest(`tours?${filter}&select=*&limit=1`)) as TourRecord[] | null;
+  const rows = (await rest(`tours?${filter}&select=*&limit=1`, true)) as TourRecord[] | null;
   return rows?.[0] ?? null;
 }
 
